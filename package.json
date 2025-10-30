@@ -1,0 +1,48 @@
+{
+  "name": "virtuxyz-ai-marketplace",
+  "version": "2.0.0",
+  "description": "Next-generation AI-powered real estate marketplace",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@babylonjs/core": "^7.0.0",
+    "@babylonjs/loaders": "^7.0.0",
+    "@google/generative-ai": "^0.11.0",
+    "@react-three/drei": "^9.105.0",
+    "@react-three/fiber": "^8.16.0",
+    "@tanstack/react-query": "^5.90.5",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.0",
+    "axios": "^1.6.0",
+    "clsx": "^2.1.0",
+    "date-fns": "^3.6.0",
+    "framer-motion": "^11.0.0",
+    "lucide-react": "^0.378.0",
+    "mapbox-gl": "^3.3.0",
+    "next": "^14.2.0",
+    "openai": "^4.47.0",
+    "postcss": "^8.4.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "react-hot-toast": "^2.4.0",
+    "react-map-gl": "^7.1.0",
+    "recharts": "^2.12.0",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss": "^3.4.0",
+    "three": "^0.163.0",
+    "typescript": "^5.4.0",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.163.0",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "^14.2.0"
+  }
+}
