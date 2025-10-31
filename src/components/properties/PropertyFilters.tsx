@@ -75,7 +75,8 @@ export default function PropertyFilters({
       listingType = 'sale'
     }
 
-    onFilterChange({
+    // Build the next filter state first so the search uses the latest values
+    const nextFilters: FilterType = {
       ...filters,
       city: cityMatch,
       propertyType: typeMatch,
@@ -83,10 +84,12 @@ export default function PropertyFilters({
       bedrooms,
       listingType,
       searchQuery: query
-    })
+    }
 
+    onFilterChange(nextFilters)
     setShowAIAssistant(false)
-    onSearch()
+    // Ensure state is applied before triggering search
+    setTimeout(() => onSearch(), 0)
   }
 
   const activeFilterCount = Object.values(filters).filter(v => v !== undefined && v !== '').length

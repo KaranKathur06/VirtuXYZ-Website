@@ -40,6 +40,7 @@ export async function GET(request: NextRequest) {
 
     // Step 2: Build query parameters
     const queryParams: GetPropertiesParams = {
+      region: 'uae', // Required by API
       page: page ? parseInt(page) : 0,
       hitsPerPage: 25,
     };
