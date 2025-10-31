@@ -1,10 +1,10 @@
 /**
- * Zyla Labs UAE Property Finder API Client
+ * Zyla Labs UAE Real Estate Data API Client (API ID: 11013)
  * Handles all API communication with proper error handling and type safety
  */
 
 const ZYLA_API_KEY = process.env.ZYLA_API_KEY || '';
-const ZYLA_BASE_URL = process.env.ZYLA_API_BASE_URL || 'https://zylalabs.com/api/7462/uae+property+finder+api';
+const ZYLA_BASE_URL = 'https://zylalabs.com/api/11013/uae+real+estate+data++api';
 
 // API Response Types
 export interface AutocompleteResult {
@@ -169,7 +169,7 @@ async function zylaFetch<T>(endpoint: string, params: Record<string, any> = {}):
     const response = await fetch(url.toString(), {
       method: 'GET',
       headers: {
-        'Authorization': `bearer ${ZYLA_API_KEY}`,
+        'Authorization': `Bearer ${ZYLA_API_KEY}`,
         'Content-Type': 'application/json',
       },
       cache: 'no-store', // Disable caching for fresh data
@@ -191,14 +191,20 @@ async function zylaFetch<T>(endpoint: string, params: Record<string, any> = {}):
 /**
  * Autocomplete location search
  * Returns location suggestions with externalIDs
+ * Endpoint: /20812/autocomplete
  */
 export async function autocompleteLocation(query: string): Promise<AutocompleteResult[]> {
-  const response = await zylaFetch<{ hits: AutocompleteResult[] }>('/11909/autocomplete', {
-    query,
-    hitsPerPage: 10,
-  });
-  
-  return response.hits || [];
+  try {
+    const response = await zylaFetch<{ hits: AutocompleteResult[] }>('/20812/autocomplete', {
+      query,
+      hitsPerPage: 10,
+    });
+    
+    return response.hits || [];
+  } catch (error) {
+    console.error('Autocomplete error:', error);
+    return [];
+  }
 }
 
 /**
@@ -221,7 +227,7 @@ export interface GetPropertiesParams {
 }
 
 export async function getProperties(params: GetPropertiesParams): Promise<PropertyListResponse> {
-  const response = await zylaFetch<PropertyListResponse>('/11913/get+properties', {
+  const response = await zylaFetch<PropertyListResponse>('/20814/properties', {
     ...params,
     hitsPerPage: params.hitsPerPage || 25,
     page: params.page || 0,
@@ -234,7 +240,7 @@ export async function getProperties(params: GetPropertiesParams): Promise<Proper
  * Get single property details by externalID
  */
 export async function getPropertyDetails(externalID: string): Promise<PropertyDetailsResponse> {
-  const response = await zylaFetch<PropertyDetailsResponse>('/11918/get+property+details', {
+  const response = await zylaFetch<PropertyDetailsResponse>('/20816/property+details', {
     externalID,
   });
   

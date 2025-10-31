@@ -79,7 +79,24 @@ export async function GET(request: NextRequest) {
     // Step 3: Fetch properties
     const response = await getProperties(queryParams);
 
-    // Step 4: Transform response for frontend
+    console.log('API Response:', JSON.stringify(response, null, 2));
+
+    // Step 4: Check if response has expected structure
+    if (!response || !response.hits || !Array.isArray(response.hits)) {
+      console.error('Unexpected API response structure:', response);
+      return NextResponse.json({
+        success: true,
+        data: {
+          properties: [],
+          total: 0,
+          page: 0,
+          totalPages: 0,
+          hasMore: false,
+        },
+      });
+    }
+
+    // Step 5: Transform response for frontend
     const transformedProperties = response.hits.map(property => ({
       id: property.id,
       externalID: property.externalID,
@@ -87,27 +104,27 @@ export async function GET(request: NextRequest) {
       price: property.price,
       currency: 'AED',
       location: {
-        city: property.location[0]?.name || 'UAE',
-        area: property.location[property.location.length - 1]?.name || '',
+        city: property.location?.[0]?.name || 'UAE',
+        area: property.location?.[property.location.length - 1]?.name || '',
         coordinates: property.geography,
       },
-      propertyType: property.category[0]?.name || property.type,
+      propertyType: property.category?.[0]?.name || property.type,
       bedrooms: property.rooms,
       bathrooms: property.baths,
       area: property.area,
       areaUnit: 'sqft',
-      images: property.photos.map(photo => photo.url),
-      coverImage: property.coverPhoto?.url || property.photos[0]?.url || '',
-      amenities: property.amenities.map(a => a.text),
+      images: Array.isArray(property.photos) ? property.photos.map(photo => photo.url) : [],
+      coverImage: property.coverPhoto?.url || property.photos?.[0]?.url || '',
+      amenities: Array.isArray(property.amenities) ? property.amenities.map(a => a.text) : [],
       furnished: property.furnishingStatus || 'unfurnished',
       listingType: property.purpose,
       rentFrequency: property.rentFrequency,
       agency: {
-        name: property.agency.name,
-        logo: property.agency.logo.url,
+        name: property.agency?.name || 'Unknown Agency',
+        logo: property.agency?.logo?.url || '',
       },
       agent: {
-        name: property.agent.name,
+        name: property.agent?.name || 'Unknown Agent',
       },
       isVerified: property.isVerified,
       datePosted: property.createdAt,
