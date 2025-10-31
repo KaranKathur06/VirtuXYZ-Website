@@ -9,6 +9,8 @@ interface Message {
   text: string
   sender: 'user' | 'ai'
   timestamp: Date
+  ctaLabel?: string
+  ctaHref?: string
 }
 
 export default function AIConcierge() {
@@ -47,17 +49,44 @@ export default function AIConcierge() {
     setInputValue('')
     setIsTyping(true)
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: Message = {
+    try {
+      const res = await fetch('/api/ai/parse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: inputValue })
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        const aiResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          text: data.summary || "Here's what I found.",
+          sender: 'ai',
+          timestamp: new Date(),
+          ctaLabel: 'View results',
+          ctaHref: data.url
+        }
+        setMessages(prev => [...prev, aiResponse])
+      } else {
+        const fallback: Message = {
+          id: (Date.now() + 1).toString(),
+          text: getAIResponse(inputValue),
+          sender: 'ai',
+          timestamp: new Date()
+        }
+        setMessages(prev => [...prev, fallback])
+      }
+    } catch (e) {
+      const errorMsg: Message = {
         id: (Date.now() + 1).toString(),
-        text: getAIResponse(inputValue),
+        text: 'Sorry, I could not process that right now. Please try again.',
         sender: 'ai',
         timestamp: new Date()
       }
-      setMessages(prev => [...prev, aiResponse])
+      setMessages(prev => [...prev, errorMsg])
+    } finally {
       setIsTyping(false)
-    }, 1500)
+    }
   }
 
   const getAIResponse = (query: string): string => {
@@ -175,6 +204,16 @@ export default function AIConcierge() {
                     }`}
                   >
                     <p className="text-sm">{message.text}</p>
+                    {message.ctaHref && (
+                      <div className="mt-3">
+                        <a
+                          href={message.ctaHref}
+                          className="inline-block px-3 py-1 text-xs rounded-md bg-gradient-to-r from-cyber-blue to-cyber-purple text-white hover:opacity-90"
+                        >
+                          {message.ctaLabel || 'Open'}
+                        </a>
+                      </div>
+                    )}
                     <p className="text-xs opacity-60 mt-1">
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
