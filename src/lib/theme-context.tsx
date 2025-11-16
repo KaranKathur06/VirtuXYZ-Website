@@ -28,12 +28,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const setTheme = (newTheme: Theme) => {
-    if (mounted) {
-      setThemeState(newTheme)
-      localStorage.setItem('virtuxyz-theme', newTheme)
-      document.documentElement.classList.remove('dark', 'light')
-      document.documentElement.classList.add(newTheme)
-    }
+    setThemeState(newTheme)
+    localStorage.setItem('virtuxyz-theme', newTheme)
+    document.documentElement.classList.remove('dark', 'light')
+    document.documentElement.classList.add(newTheme)
   }
 
   const toggleTheme = () => {
@@ -41,7 +39,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setTheme(newTheme)
   }
 
-  // Always provide context, even during SSR, to prevent errors
+  // Prevent flash of unstyled content
+  if (!mounted) {
+    return <>{children}</>
+  }
+
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       {children}

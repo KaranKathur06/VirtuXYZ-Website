@@ -11,9 +11,6 @@ import { Search, SlidersHorizontal, MapPin, Home, DollarSign, Bed, Bath, ArrowUp
 import LivePropertyCard from '@/components/properties/LivePropertyCard';
 import { useProperties, PropertySearchParams } from '@/hooks/useProperties';
 
-// Force dynamic rendering since this page uses client-side hooks
-export const dynamic = 'force-dynamic'
-
 export default function PropertiesPage() {
   const [searchParams, setSearchParams] = useState<PropertySearchParams>({
     location: '',

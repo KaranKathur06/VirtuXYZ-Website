@@ -12,9 +12,6 @@ import Image from 'next/image'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 
-// Force dynamic rendering since this page uses client-side hooks
-export const dynamic = 'force-dynamic'
-
 export default function BuyerDashboard() {
   const [activeTab, setActiveTab] = useState('overview')
 

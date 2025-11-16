@@ -8,9 +8,6 @@ import Footer from '@/components/layout/Footer'
 import ParticleBackground from '@/components/effects/ParticleBackground'
 import toast from 'react-hot-toast'
 
-// Force dynamic rendering since this page uses client-side hooks
-export const dynamic = 'force-dynamic'
-
 export default function AgentPortalPage() {
   const [uploadedImages, setUploadedImages] = useState<string[]>([])
   const [isAnalyzing, setIsAnalyzing] = useState(false)

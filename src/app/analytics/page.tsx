@@ -7,9 +7,6 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ParticleBackground from '@/components/effects/ParticleBackground'
 
-// Force dynamic rendering since this page uses client-side hooks
-export const dynamic = 'force-dynamic'
-
 export default function AnalyticsPage() {
   const [selectedCity, setSelectedCity] = useState('all')
   const [timeRange, setTimeRange] = useState('6m')

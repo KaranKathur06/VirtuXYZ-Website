@@ -2,18 +2,40 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageSquare, X, Send, Mic, Sparkles, Loader } from 'lucide-react'
+import { MessageSquare, X, Send, Mic, Sparkles, Loader, ExternalLink, Home } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 interface Message {
   id: string
   text: string
   sender: 'user' | 'ai'
   timestamp: Date
-  ctaLabel?: string
-  ctaHref?: string
+  filters?: {
+    location?: string
+    propertyType?: string
+    bedrooms?: number
+    purpose?: 'for-sale' | 'for-rent'
+    minPrice?: number
+    maxPrice?: number
+    categoryExternalID?: string
+    searchUrl?: string
+  }
+  properties?: Array<{
+    id: string
+    title: string
+    location: string
+    price: number
+    bedrooms?: number
+    bathrooms?: number
+    area?: number
+    coverImage?: string
+    listingType: string
+  }>
+  propertyCount?: number
 }
 
 export default function AIConcierge() {
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -35,58 +57,166 @@ export default function AIConcierge() {
     scrollToBottom()
   }, [messages])
 
-  const handleSend = async () => {
-    if (!inputValue.trim()) return
-
+  const handleSend = async (queryOverride?: string) => {
+    const userQuery = (queryOverride || inputValue).trim()
+    if (!userQuery) return
     const userMessage: Message = {
       id: Date.now().toString(),
-      text: inputValue,
+      text: userQuery,
       sender: 'user',
       timestamp: new Date()
     }
 
     setMessages(prev => [...prev, userMessage])
-    setInputValue('')
+    if (!queryOverride) setInputValue('')
     setIsTyping(true)
 
     try {
-      const res = await fetch('/api/ai/parse', {
+      // Step 1: Parse the query
+      const parseResponse = await fetch('/api/ai/parse', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: inputValue })
+        body: JSON.stringify({ query: userQuery })
       })
 
-      if (res.ok) {
-        const data = await res.json()
+      const parseResult = await parseResponse.json()
+
+      if (parseResult.success && parseResult.filters) {
+        const filters = parseResult.filters
+
+        // Step 2: Check if it's a property search query
+        const isPropertySearch = filters.location || filters.propertyType || filters.bedrooms || filters.purpose
+
+        if (isPropertySearch && filters.searchUrl) {
+          // Step 3: Fetch property previews
+          const searchParams = new URLSearchParams()
+          if (filters.location) searchParams.append('location', filters.location)
+          if (filters.purpose) searchParams.append('purpose', filters.purpose)
+          if (filters.categoryExternalID) searchParams.append('category', filters.categoryExternalID)
+          if (filters.bedrooms) searchParams.append('rooms', filters.bedrooms.toString())
+          if (filters.minPrice) searchParams.append('minPrice', filters.minPrice.toString())
+          if (filters.maxPrice) searchParams.append('maxPrice', filters.maxPrice.toString())
+          searchParams.append('page', '0')
+          searchParams.append('sort', 'date-desc')
+
+          const propertiesResponse = await fetch(`/api/properties/search?${searchParams.toString()}`)
+          const propertiesResult = await propertiesResponse.json()
+
+          let propertyCount = 0
+          let previewProperties: any[] = []
+
+          if (propertiesResult.success && propertiesResult.data) {
+            propertyCount = propertiesResult.data.total || 0
+            // Apply client-side filtering to ensure exact matches for preview
+            let allProperties = propertiesResult.data.properties || []
+            
+            // Filter properties to ensure they match all applied filters exactly
+            if (filters.bedrooms) {
+              allProperties = allProperties.filter((p: any) => 
+                (p.bedrooms ?? 0) >= filters.bedrooms!
+              )
+            }
+            if (filters.minPrice) {
+              allProperties = allProperties.filter((p: any) => 
+                (p.price ?? 0) >= filters.minPrice!
+              )
+            }
+            if (filters.maxPrice) {
+              allProperties = allProperties.filter((p: any) => 
+                (p.price ?? 0) <= filters.maxPrice!
+              )
+            }
+            if (filters.purpose) {
+              allProperties = allProperties.filter((p: any) => 
+                (p.listingType || p.purpose) === filters.purpose
+              )
+            }
+            
+            // Take first 3 filtered properties
+            previewProperties = allProperties.slice(0, 3).map((p: any) => ({
+              id: p.id || p.externalID,
+              title: p.title,
+              location: `${p.location?.area || ''}, ${p.location?.city || 'UAE'}`.trim().replace(/^,/, ''),
+              price: p.price,
+              bedrooms: p.bedrooms,
+              bathrooms: p.bathrooms,
+              area: p.area,
+              coverImage: p.coverImage,
+              listingType: p.listingType || filters.purpose || 'for-sale'
+            }))
+            
+            // Update property count to reflect filtered results
+            if (filters.bedrooms || filters.minPrice || filters.maxPrice || filters.purpose) {
+              propertyCount = allProperties.length
+            }
+          }
+
+          // Step 4: Generate AI response with filters and preview
+          const aiResponse: Message = {
+            id: (Date.now() + 1).toString(),
+            text: generatePropertyResponse(filters, propertyCount, previewProperties.length),
+            sender: 'ai',
+            timestamp: new Date(),
+            filters,
+            properties: previewProperties,
+            propertyCount
+          }
+
+          setMessages(prev => [...prev, aiResponse])
+        } else {
+          // Generic response for non-property queries
+          const aiResponse: Message = {
+            id: (Date.now() + 1).toString(),
+            text: getAIResponse(userQuery),
+            sender: 'ai',
+            timestamp: new Date()
+          }
+          setMessages(prev => [...prev, aiResponse])
+        }
+      } else {
+        // Fallback to basic AI response
         const aiResponse: Message = {
           id: (Date.now() + 1).toString(),
-          text: data.summary || "Here's what I found.",
-          sender: 'ai',
-          timestamp: new Date(),
-          ctaLabel: 'View results',
-          ctaHref: data.url
-        }
-        setMessages(prev => [...prev, aiResponse])
-      } else {
-        const fallback: Message = {
-          id: (Date.now() + 1).toString(),
-          text: getAIResponse(inputValue),
+          text: getAIResponse(userQuery),
           sender: 'ai',
           timestamp: new Date()
         }
-        setMessages(prev => [...prev, fallback])
+        setMessages(prev => [...prev, aiResponse])
       }
-    } catch (e) {
-      const errorMsg: Message = {
+    } catch (error) {
+      console.error('Error processing AI query:', error)
+      const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: 'Sorry, I could not process that right now. Please try again.',
+        text: "I apologize, but I encountered an error processing your request. Please try rephrasing your query or use the filters on our explore page.",
         sender: 'ai',
         timestamp: new Date()
       }
-      setMessages(prev => [...prev, errorMsg])
+      setMessages(prev => [...prev, aiResponse])
     } finally {
       setIsTyping(false)
     }
+  }
+
+  const generatePropertyResponse = (filters: any, totalCount: number, previewCount: number): string => {
+    const parts: string[] = []
+    
+    if (totalCount > 0) {
+      parts.push(`Found ${totalCount} ${totalCount === 1 ? 'property' : 'properties'}`)
+      
+      if (filters.location) parts.push(`in ${filters.location}`)
+      if (filters.propertyType) parts.push(`${filters.propertyType.toLowerCase()}${filters.propertyType !== 'Apartment' ? 's' : 's'}`)
+      if (filters.bedrooms) parts.push(`with ${filters.bedrooms} bedroom${filters.bedrooms > 1 ? 's' : ''}`)
+      if (filters.purpose === 'for-rent') parts.push(`for rent`)
+      if (filters.purpose === 'for-sale') parts.push(`for sale`)
+      
+      if (previewCount > 0) {
+        parts.push(`\n\nHere are ${previewCount} preview${previewCount > 1 ? 's' : ''} below. Click "View All" to see all ${totalCount} properties!`)
+      }
+    } else {
+      parts.push("I couldn't find properties matching your criteria. Try adjusting your search filters!")
+    }
+    
+    return parts.join(' ') + '.'
   }
 
   const getAIResponse = (query: string): string => {
@@ -203,17 +333,81 @@ export default function AIConcierge() {
                         : 'bg-white/10 text-white'
                     }`}
                   >
-                    <p className="text-sm">{message.text}</p>
-                    {message.ctaHref && (
-                      <div className="mt-3">
-                        <a
-                          href={message.ctaHref}
-                          className="inline-block px-3 py-1 text-xs rounded-md bg-gradient-to-r from-cyber-blue to-cyber-purple text-white hover:opacity-90"
-                        >
-                          {message.ctaLabel || 'Open'}
-                        </a>
+                    <p className="text-sm whitespace-pre-wrap">{message.text}</p>
+                    
+                    {/* Property Previews */}
+                    {message.properties && message.properties.length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        {message.properties.map((property) => (
+                          <motion.div
+                            key={property.id}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-white/5 rounded-lg p-2 border border-cyber-blue/30"
+                          >
+                            <div className="flex gap-2">
+                              {property.coverImage ? (
+                                <img
+                                  src={property.coverImage}
+                                  alt={property.title}
+                                  className="w-16 h-16 object-cover rounded"
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).src = '/placeholder-property.jpg'
+                                  }}
+                                />
+                              ) : (
+                                <div className="w-16 h-16 bg-cyber-blue/20 rounded flex items-center justify-center">
+                                  <Home className="w-6 h-6 text-cyber-blue" />
+                                </div>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs font-semibold truncate">{property.title}</p>
+                                <p className="text-xs opacity-70 truncate">{property.location}</p>
+                                <div className="flex gap-2 mt-1 text-xs">
+                                  {property.bedrooms && <span>🛏️ {property.bedrooms}</span>}
+                                  {property.bathrooms && <span>🚿 {property.bathrooms}</span>}
+                                  {property.area && <span>📐 {property.area} sqft</span>}
+                                </div>
+                                <p className="text-xs font-bold text-cyber-blue mt-1">
+                                  AED {property.price?.toLocaleString() || 'N/A'}
+                                  {property.listingType === 'for-rent' ? '/year' : ''}
+                                </p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                        
+                        {message.propertyCount && message.propertyCount > message.properties.length && (
+                          <button
+                            onClick={() => {
+                              if (message.filters?.searchUrl) {
+                                setIsOpen(false)
+                                router.push(message.filters.searchUrl)
+                              }
+                            }}
+                            className="w-full mt-2 px-4 py-2 bg-gradient-to-r from-cyber-blue to-cyber-purple rounded-lg text-white text-sm font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-cyber-blue/50 transition-all"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            View All {message.propertyCount} Properties
+                          </button>
+                        )}
                       </div>
                     )}
+                    
+                    {/* View All Button (if no previews but has filters) */}
+                    {!message.properties && message.filters?.searchUrl && (
+                      <button
+                        onClick={() => {
+                          setIsOpen(false)
+                          router.push(message.filters!.searchUrl!)
+                        }}
+                        className="w-full mt-2 px-4 py-2 bg-gradient-to-r from-cyber-blue to-cyber-purple rounded-lg text-white text-sm font-semibold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-cyber-blue/50 transition-all"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        View Properties
+                      </button>
+                    )}
+                    
                     <p className="text-xs opacity-60 mt-1">
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
@@ -237,23 +431,23 @@ export default function AIConcierge() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Quick Actions */}
-            {messages.length <= 2 && (
-              <div className="px-4 pb-2">
-                <p className="text-xs text-gray-400 mb-2">Quick actions:</p>
-                <div className="flex flex-wrap gap-2">
-                  {quickActions.map((action) => (
-                    <button
-                      key={action}
-                      onClick={() => setInputValue(action)}
-                      className="px-3 py-1 text-xs rounded-full bg-white/5 hover:bg-white/10 border border-cyber-blue/30 hover:border-cyber-blue transition-all"
-                    >
-                      {action}
-                    </button>
-                  ))}
+              {/* Quick Actions */}
+              {messages.length <= 2 && (
+                <div className="px-4 pb-2">
+                  <p className="text-xs text-gray-400 mb-2">Quick actions:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {quickActions.map((action) => (
+                      <button
+                        key={action}
+                        onClick={() => handleSend(action)}
+                        className="px-3 py-1 text-xs rounded-full bg-white/5 hover:bg-white/10 border border-cyber-blue/30 hover:border-cyber-blue transition-all"
+                      >
+                        {action}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Input */}
             <div className="p-4 border-t border-cyber-blue/20">
@@ -270,7 +464,7 @@ export default function AIConcierge() {
                   <Mic className="w-5 h-5 text-cyber-blue" />
                 </button>
                 <button
-                  onClick={handleSend}
+                  onClick={() => handleSend()}
                   className="p-2 bg-gradient-to-r from-cyber-blue to-cyber-purple rounded-lg hover:shadow-lg hover:shadow-cyber-blue/50 transition-all"
                 >
                   <Send className="w-5 h-5 text-white" />

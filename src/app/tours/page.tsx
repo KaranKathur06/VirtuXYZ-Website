@@ -7,9 +7,6 @@ import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ParticleBackground from '@/components/effects/ParticleBackground'
 
-// Force dynamic rendering since this page uses client-side hooks
-export const dynamic = 'force-dynamic'
-
 export default function ToursPage() {
   const [selectedTour, setSelectedTour] = useState<number | null>(null)
   const [isVRMode, setIsVRMode] = useState(false)

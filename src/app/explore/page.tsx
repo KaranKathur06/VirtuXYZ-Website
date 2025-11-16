@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Loader2, AlertCircle, Grid3x3, List } from 'lucide-react'
+import { useSearchParams } from 'next/navigation'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ParticleBackground from '@/components/effects/ParticleBackground'
@@ -11,10 +12,8 @@ import PropertyFilters from '@/components/properties/PropertyFilters'
 import { UAEProperty, PropertyFilters as FilterType, PropertySearchResponse } from '@/types/property'
 import toast, { Toaster } from 'react-hot-toast'
 
-// Force dynamic rendering since this page uses client-side hooks
-export const dynamic = 'force-dynamic'
-
 export default function ExplorePage() {
+  const searchParams = useSearchParams()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [properties, setProperties] = useState<UAEProperty[]>([])
   const [filters, setFilters] = useState<FilterType>({})
@@ -112,7 +111,7 @@ export default function ExplorePage() {
         externalUrl: `/property/live/${prop.externalID}`,
       }))
 
-      setProperties(append ? [...properties, ...transformedProperties] : transformedProperties)
+      setProperties(append ? (prev) => [...prev, ...transformedProperties] : transformedProperties)
       setTotalResults(data.total)
       setHasMore(data.hasMore)
       setPage(currentPage)
@@ -122,14 +121,67 @@ export default function ExplorePage() {
     } finally {
       setIsLoading(false)
     }
-  }, [filters, properties])
+  }, [filters])
 
-  // Initial load
+  // Track if this is the initial mount
+  const [isInitialMount, setIsInitialMount] = useState(true)
+
+  // Initialize filters from URL parameters and trigger search when URL changes
   useEffect(() => {
-    fetchProperties(1, false)
-  }, [])
+    if (searchParams) {
+      const urlFilters: FilterType = {}
+      
+      const location = searchParams.get('location')
+      if (location) urlFilters.city = location
+      
+      const purpose = searchParams.get('purpose')
+      if (purpose === 'for-rent') urlFilters.listingType = 'rent'
+      if (purpose === 'for-sale') urlFilters.listingType = 'sale'
+      
+      const category = searchParams.get('category')
+      if (category) {
+        const categoryMap: Record<string, string> = {
+          '4': 'Apartment',
+          '3': 'Villa',
+          '16': 'Townhouse',
+          '14': 'Penthouse',
+          '6': 'Office',
+          '5': 'Shop',
+        }
+        urlFilters.propertyType = categoryMap[category] || category
+      }
+      
+      const rooms = searchParams.get('rooms')
+      if (rooms) urlFilters.bedrooms = parseInt(rooms)
+      
+      const minPrice = searchParams.get('minPrice')
+      if (minPrice) urlFilters.minPrice = parseInt(minPrice)
+      
+      const maxPrice = searchParams.get('maxPrice')
+      if (maxPrice) urlFilters.maxPrice = parseInt(maxPrice)
+      
+      // Update filters - this will trigger the search via the filters dependency
+      setFilters(urlFilters)
+      setPage(1)
+      setIsInitialMount(false)
+    } else if (isInitialMount) {
+      // On initial mount with no URL params, do an initial search
+      setIsInitialMount(false)
+      fetchProperties(1, false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]) // Run when searchParams change
 
-  // Handle search
+  // Trigger search when filters change (but not on initial mount if we already handled URL params)
+  useEffect(() => {
+    if (!isInitialMount) {
+      setPage(1)
+      fetchProperties(1, false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]) // Run when filters change
+
+  // Handle search button click
   const handleSearch = () => {
     setPage(1)
     fetchProperties(1, false)

@@ -50,16 +50,27 @@ export default function PropertyFilters({
     // Extract property type
     const typeMatch = propertyTypes.find(type => lowerQuery.includes(type.toLowerCase()))
     
-    // Extract price (simple regex for numbers with M/K)
-    const priceMatch = lowerQuery.match(/(\d+(?:\.\d+)?)\s*(m|k|million|thousand)/i)
+    // Extract price (handles "under", "below", "upto" patterns with numbers and M/K)
     let maxPrice
-    if (priceMatch) {
-      const value = parseFloat(priceMatch[1])
-      const unit = priceMatch[2].toLowerCase()
-      if (unit === 'm' || unit === 'million') {
-        maxPrice = value * 1000000
-      } else if (unit === 'k' || unit === 'thousand') {
-        maxPrice = value * 1000
+    const pricePatterns = [
+      /under\s*(\d+(?:\.\d+)?)\s*(m|k|million|thousand)/i,
+      /below\s*(\d+(?:\.\d+)?)\s*(m|k|million|thousand)/i,
+      /upto\s*(\d+(?:\.\d+)?)\s*(m|k|million|thousand)/i,
+      /up\s*to\s*(\d+(?:\.\d+)?)\s*(m|k|million|thousand)/i,
+      /(\d+(?:\.\d+)?)\s*(m|k|million|thousand)/i, // Fallback: just number with unit
+    ]
+    
+    for (const pattern of pricePatterns) {
+      const priceMatch = lowerQuery.match(pattern)
+      if (priceMatch) {
+        const value = parseFloat(priceMatch[1])
+        const unit = priceMatch[2].toLowerCase()
+        if (unit === 'm' || unit === 'million') {
+          maxPrice = value * 1000000
+        } else if (unit === 'k' || unit === 'thousand') {
+          maxPrice = value * 1000
+        }
+        break // Use first match
       }
     }
 
