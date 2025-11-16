@@ -1,10 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
   trailingSlash: true,
-  images: {
-    unoptimized: true,
-  },
+  // Dynamic mode - API routes and server-side rendering enabled
 };
 
 module.exports = nextConfig;
