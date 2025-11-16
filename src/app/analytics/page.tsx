@@ -1,8 +1,5 @@
 'use client'
 
-// Force dynamic rendering
-export const dynamic = 'force-dynamic';
-
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { TrendingUp, TrendingDown, DollarSign, Home, MapPin, BarChart3, LineChart, PieChart, Sparkles } from 'lucide-react'

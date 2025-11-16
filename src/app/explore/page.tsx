@@ -12,9 +12,6 @@ import PropertyFilters from '@/components/properties/PropertyFilters'
 import { UAEProperty, PropertyFilters as FilterType, PropertySearchResponse } from '@/types/property'
 import toast, { Toaster } from 'react-hot-toast'
 
-// Force dynamic rendering
-export const dynamic = 'force-dynamic';
-
 function ExplorePageContent() {
   const searchParams = useSearchParams()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')

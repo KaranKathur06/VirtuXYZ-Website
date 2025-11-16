@@ -19,19 +19,23 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true)
     // Load theme from localStorage or system preference
-    const savedTheme = localStorage.getItem('virtuxyz-theme') as Theme
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    const initialTheme = savedTheme || systemTheme
-    setThemeState(initialTheme)
-    document.documentElement.classList.toggle('dark', initialTheme === 'dark')
-    document.documentElement.classList.toggle('light', initialTheme === 'light')
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('virtuxyz-theme') as Theme
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      const initialTheme = savedTheme || systemTheme
+      setThemeState(initialTheme)
+      document.documentElement.classList.toggle('dark', initialTheme === 'dark')
+      document.documentElement.classList.toggle('light', initialTheme === 'light')
+    }
   }, [])
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
-    localStorage.setItem('virtuxyz-theme', newTheme)
-    document.documentElement.classList.remove('dark', 'light')
-    document.documentElement.classList.add(newTheme)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('virtuxyz-theme', newTheme)
+      document.documentElement.classList.remove('dark', 'light')
+      document.documentElement.classList.add(newTheme)
+    }
   }
 
   const toggleTheme = () => {
@@ -39,11 +43,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setTheme(newTheme)
   }
 
-  // Prevent flash of unstyled content
-  if (!mounted) {
-    return <>{children}</>
-  }
-
+  // Always provide context, even during SSR
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       {children}

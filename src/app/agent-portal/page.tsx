@@ -1,8 +1,5 @@
 'use client'
 
-// Force dynamic rendering
-export const dynamic = 'force-dynamic';
-
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Upload, Image as ImageIcon, Sparkles, Wand2, DollarSign, MapPin, Home, Bed, Bath, Square, Check } from 'lucide-react'
