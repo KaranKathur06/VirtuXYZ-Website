@@ -5,6 +5,9 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+// Force dynamic rendering - this route processes POST requests
+export const dynamic = 'force-dynamic';
+
 interface ParsedFilters {
   location?: string;
   propertyType?: string;

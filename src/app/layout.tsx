@@ -4,6 +4,7 @@ import './globals.css'
 import { Toaster } from 'react-hot-toast'
 import AIConcierge from '@/components/ai/AIConcierge'
 import { ThemeProvider } from '@/lib/theme-context'
+import { QueryClientProvider } from '@/components/providers/QueryProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,21 +27,23 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} antialiased`}>
-        <ThemeProvider>
-          {children}
-          <AIConcierge />
-          <Toaster 
-            position="top-right"
-            toastOptions={{
-              className: 'glass',
-              style: {
-                background: 'var(--surface)',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border)',
-              },
-            }}
-          />
-        </ThemeProvider>
+        <QueryClientProvider>
+          <ThemeProvider>
+            {children}
+            <AIConcierge />
+            <Toaster 
+              position="top-right"
+              toastOptions={{
+                className: 'glass',
+                style: {
+                  background: 'var(--surface)',
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--border)',
+                },
+              }}
+            />
+          </ThemeProvider>
+        </QueryClientProvider>
       </body>
     </html>
   )

@@ -5,6 +5,9 @@
 
 'use client';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, SlidersHorizontal, MapPin, Home, DollarSign, Bed, Bath, ArrowUpDown } from 'lucide-react';

@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from 'next/server'
 // Secure API proxy for UAE Housing Search API
 // This keeps the API key on the server side
 
+// Force dynamic rendering - this route uses searchParams
+export const dynamic = 'force-dynamic';
+
 const UAE_HOUSING_API_BASE = 'https://zylalabs.com/api/6111/uae+housing+search+api'
 const API_KEY = process.env.UAE_HOUSING_API_KEY
 

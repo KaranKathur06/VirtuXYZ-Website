@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Loader2, AlertCircle, Grid3x3, List } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
@@ -12,7 +12,10 @@ import PropertyFilters from '@/components/properties/PropertyFilters'
 import { UAEProperty, PropertyFilters as FilterType, PropertySearchResponse } from '@/types/property'
 import toast, { Toaster } from 'react-hot-toast'
 
-export default function ExplorePage() {
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
+function ExplorePageContent() {
   const searchParams = useSearchParams()
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [properties, setProperties] = useState<UAEProperty[]>([])
@@ -355,5 +358,17 @@ export default function ExplorePage() {
 
       <Footer />
     </main>
+  )
+}
+
+export default function ExplorePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-cyber-blue" />
+      </div>
+    }>
+      <ExplorePageContent />
+    </Suspense>
   )
 }
