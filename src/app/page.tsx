@@ -1,9 +1,5 @@
 'use client'
 
-// Force dynamic rendering
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
 import { useEffect, useState } from 'react'
 import Hero from '@/components/home/Hero'
 import FeaturesSection from '@/components/home/FeaturesSection'
