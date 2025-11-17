@@ -5,6 +5,8 @@ import { motion } from 'framer-motion'
 import { Search, Mic, MapPin, Home, DollarSign, Sparkles, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
+const HERO_VIDEO_SRC = '/demo%20gif.mp4'
+
 export default function Hero() {
   const [searchQuery, setSearchQuery] = useState('')
   const [propertyType, setPropertyType] = useState('all')
@@ -39,21 +41,20 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Hero background video from /public */}
+      {/* Hero Background Video */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <video
-          className="h-full w-full object-cover"
+          className="w-full h-full object-cover scale-105 brightness-[0.9]"
+          src={HERO_VIDEO_SRC}
           autoPlay
           loop
           muted
           playsInline
           preload="auto"
-          poster="/image0 (1).png"
-        >
-          <source src="/demo%20gif.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(236,72,153,0.16),_transparent_55%)]" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-cyber-darker/70 to-cyber-darker" />
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-cyber-darker/70 to-black" />
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-[#050816]" />
       </div>
 
       {/* Content */}
@@ -81,7 +82,7 @@ export default function Hero() {
               The Future of
             </span>
             <br />
-            <span className="text-white">Real Estate</span>
+            <span className="neon-text">Real Estate</span>
           </motion.h1>
 
           {/* Subtitle */}

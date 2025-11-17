@@ -14,9 +14,11 @@ import TechnologyStack from '@/components/home/TechnologyStack'
 import CTASection from '@/components/home/CTASection'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
+import { useTheme } from '@/lib/theme-context'
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
+  const { theme } = useTheme()
 
   useEffect(() => {
     setMounted(true)
@@ -26,19 +28,15 @@ export default function Home() {
     return null
   }
 
-  return (
-    <main className="relative min-h-screen bg-gradient-to-b from-[#050816] via-[#020617] to-black">
-      {/* Subtle glow background shapes (pure CSS, no canvas/3D for better performance) */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-20 w-80 h-80 bg-cyan-500/25 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -right-10 w-96 h-96 bg-fuchsia-500/20 rounded-full blur-3xl" />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] bg-blue-500/10 rounded-full blur-3xl" />
-      </div>
+  const sectionBgClass = theme === 'light' ? 'bg-white' : 'bg-[#050816]'
 
+  return (
+    <main className={`relative min-h-screen transition-colors duration-500 ${sectionBgClass}`}>
       <Navbar />
 
-      <div className="relative z-10">
-        <Hero />
+      <Hero />
+
+      <div className={`relative z-10 ${sectionBgClass}`}>
         <AIShowcase />
         <FeaturesSection />
         <WhatWeDo />
