@@ -1,10 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Search, Mic, MapPin, Home, DollarSign, Sparkles, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import CityScene3D from '@/components/3d/CityScene3D'
 
 export default function Hero() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -13,9 +12,14 @@ export default function Hero() {
   const [isListening, setIsListening] = useState(false)
 
   const handleVoiceSearch = () => {
-    setIsListening(!isListening)
-    // Voice search implementation would go here
-    if ('webkitSpeechRecognition' in window) {
+    // Guard against environments where window or webkitSpeechRecognition is not available
+    if (typeof window === 'undefined' || !('webkitSpeechRecognition' in window)) {
+      return
+    }
+
+    setIsListening(true)
+
+    try {
       const recognition = new (window as any).webkitSpeechRecognition()
       recognition.continuous = false
       recognition.interimResults = false
@@ -28,18 +32,29 @@ export default function Hero() {
       }
       
       recognition.start()
+    } catch {
+      setIsListening(false)
     }
   }
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* 3D City Background */}
-      <div className="absolute inset-0 z-0">
-        <CityScene3D />
+      {/* Hero background video from /public */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <video
+          className="h-full w-full object-cover"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          poster="/image0 (1).png"
+        >
+          <source src="/demo%20gif.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.18),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(236,72,153,0.16),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-cyber-darker/70 to-cyber-darker" />
       </div>
-
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyber-darker/50 to-cyber-darker z-[1]"></div>
 
       {/* Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -66,7 +81,7 @@ export default function Hero() {
               The Future of
             </span>
             <br />
-            <span className="neon-text">Real Estate</span>
+            <span className="text-white">Real Estate</span>
           </motion.h1>
 
           {/* Subtitle */}
