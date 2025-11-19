@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Search, Mic, MapPin, Home, DollarSign, Sparkles, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import { useTheme } from '@/lib/theme-context'
 
 const HERO_VIDEO_SRC = '/demo%20gif.mp4'
 
@@ -12,9 +13,9 @@ export default function Hero() {
   const [propertyType, setPropertyType] = useState('all')
   const [priceRange, setPriceRange] = useState('any')
   const [isListening, setIsListening] = useState(false)
+  const { theme } = useTheme()
 
   const handleVoiceSearch = () => {
-    // Guard against environments where window or webkitSpeechRecognition is not available
     if (typeof window === 'undefined' || !('webkitSpeechRecognition' in window)) {
       return
     }
@@ -40,11 +41,11 @@ export default function Hero() {
   }
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 text-white">
       {/* Hero Background Video */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <video
-          className="w-full h-full object-cover scale-105 brightness-[0.9]"
+          className="w-full h-full object-cover scale-105 brightness-90"
           src={HERO_VIDEO_SRC}
           autoPlay
           loop
@@ -53,19 +54,18 @@ export default function Hero() {
           preload="auto"
           aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-cyber-darker/70 to-black" />
-        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-[#050816]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
       </div>
 
       {/* Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="max-w-5xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto text-center text-white drop-shadow-[0_8px_30px_rgba(0,0,0,0.65)]">
           {/* AI Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center space-x-2 px-4 py-2 rounded-full glass mb-8"
+            className="inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 mb-8"
           >
             <Sparkles className="w-4 h-4 text-cyber-blue animate-pulse" />
             <span className="text-sm font-medium">Powered by Advanced AI Technology</span>
@@ -76,11 +76,9 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight"
+            className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight tracking-tight"
           >
-            <span className="bg-gradient-to-r from-white via-cyber-blue to-cyber-purple bg-clip-text text-transparent">
-              The Future of
-            </span>
+            The Future of
             <br />
             <span className="neon-text">Real Estate</span>
           </motion.h1>
@@ -90,7 +88,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-secondary mb-12 max-w-3xl mx-auto"
+            className="text-xl md:text-2xl text-white/80 mb-12 max-w-3xl mx-auto"
           >
             Experience properties like never before with AI-guided virtual tours, 
             smart analytics, and immersive 3D exploration
@@ -101,23 +99,23 @@ export default function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="glass rounded-2xl p-4 md:p-6 max-w-4xl mx-auto mb-8"
+            className="rounded-2xl p-4 md:p-6 max-w-4xl mx-auto mb-8 border border-white/10 bg-black/30 backdrop-blur-sm shadow-[0_25px_80px_rgba(0,0,0,0.45)]"
           >
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col md:flex-row gap-4 text-white">
               {/* Location Search */}
               <div className="flex-1 relative">
-                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-cyber-blue" />
+                <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-cyan-300" />
                 <input
                   type="text"
                   placeholder="Enter location, city, or neighborhood..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-12 py-4 bg-white/5 border border-cyber-blue/30 rounded-xl text-primary placeholder-gray-400 focus:outline-none focus:border-cyber-blue focus:ring-2 focus:ring-cyber-blue/50"
+                  className="w-full pl-12 pr-12 py-4 rounded-xl bg-white/5 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:border-white focus:ring-2 focus:ring-white/50"
                 />
                 <button
                   onClick={handleVoiceSearch}
-                  className={`absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-lg transition-all ${
-                    isListening ? 'bg-red-500 animate-pulse' : 'hover:bg-white/10'
+                  className={`absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-all ${
+                    isListening ? 'bg-red-500 animate-pulse text-white' : 'hover:bg-white/10 text-white'
                   }`}
                 >
                   <Mic className="w-5 h-5" />
@@ -126,11 +124,11 @@ export default function Hero() {
 
               {/* Property Type */}
               <div className="relative">
-                <Home className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-cyber-blue pointer-events-none" />
+                <Home className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-cyan-300 pointer-events-none" />
                 <select
                   value={propertyType}
                   onChange={(e) => setPropertyType(e.target.value)}
-                  className="w-full md:w-48 pl-12 pr-4 py-4 bg-white/5 border border-cyber-blue/30 rounded-xl text-primary focus:outline-none focus:border-cyber-blue focus:ring-2 focus:ring-cyber-blue/50 appearance-none cursor-pointer"
+                  className="w-full md:w-48 pl-12 pr-4 py-4 bg-white/5 border border-white/30 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-white/40 appearance-none cursor-pointer"
                 >
                   <option value="all">All Types</option>
                   <option value="house">House</option>
@@ -143,11 +141,11 @@ export default function Hero() {
 
               {/* Price Range */}
               <div className="relative">
-                <DollarSign className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-cyber-blue pointer-events-none" />
+                <DollarSign className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-cyan-300 pointer-events-none" />
                 <select
                   value={priceRange}
                   onChange={(e) => setPriceRange(e.target.value)}
-                  className="w-full md:w-48 pl-12 pr-4 py-4 bg-white/5 border border-cyber-blue/30 rounded-xl text-primary focus:outline-none focus:border-cyber-blue focus:ring-2 focus:ring-cyber-blue/50 appearance-none cursor-pointer"
+                  className="w-full md:w-48 pl-12 pr-4 py-4 bg-white/5 border border-white/30 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-white/40 appearance-none cursor-pointer"
                 >
                   <option value="any">Any Price</option>
                   <option value="0-500k">Under $500K</option>
@@ -168,12 +166,12 @@ export default function Hero() {
             </div>
 
             {/* Quick Filters */}
-            <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-cyber-blue/20">
-              <span className="text-sm text-tertiary">Popular:</span>
+            <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/10 text-white">
+              <span className="text-sm text-white/70">Popular:</span>
               {['Luxury Apartments', 'Smart Homes', 'Eco-Friendly', 'Waterfront'].map((filter) => (
                 <button
                   key={filter}
-                  className="px-3 py-1 text-sm rounded-full bg-white/5 hover:bg-cyber-blue/20 border border-cyber-blue/30 hover:border-cyber-blue transition-all"
+                  className="px-3 py-1 text-sm rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all"
                 >
                   {filter}
                 </button>

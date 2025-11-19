@@ -28,13 +28,13 @@ export default function Home() {
     return null
   }
 
-  const sectionBgClass = theme === 'light' ? 'bg-white' : 'bg-[#050816]'
+  const sectionBgClass = theme === 'light' ? 'bg-white text-neutral-900' : 'bg-[#050816] text-white'
 
   return (
     <main className={`relative min-h-screen transition-colors duration-500 ${sectionBgClass}`}>
       <Navbar />
-
-      <Hero />
+      
+        <Hero />
 
       <div className={`relative z-10 ${sectionBgClass}`}>
         <AIShowcase />

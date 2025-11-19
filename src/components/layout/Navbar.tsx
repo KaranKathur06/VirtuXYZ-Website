@@ -6,10 +6,13 @@ import Image from 'next/image'
 import { Menu, X, Home, Search, BarChart3, Building2, User, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ThemeToggle from './ThemeToggle'
+import { useTheme } from '@/lib/theme-context'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const { theme } = useTheme()
+  const isLight = theme === 'light'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -28,30 +31,47 @@ export default function Navbar() {
     { name: 'Properties', href: '/explore', icon: Building2 },
   ]
 
+  const overlayMode = isLight && !scrolled
+
+  const navBackgroundClass = scrolled
+    ? isLight
+      ? 'bg-white/90 backdrop-blur-xl shadow-lg shadow-black/5 border-b border-black/10'
+      : 'glass shadow-lg shadow-cyber-blue/10'
+    : 'bg-transparent'
+
+  const navLinkClass = `${overlayMode
+    ? 'text-white drop-shadow-[0_3px_12px_rgba(0,0,0,0.75)] hover:bg-white/10'
+    : isLight
+      ? 'text-neutral-700 hover:text-neutral-900 hover:bg-white/60'
+      : 'text-secondary hover:text-primary hover:bg-white/5'
+  } px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors duration-300`
+
+  const authLinkClass = overlayMode
+    ? 'flex items-center space-x-2 px-4 py-2 text-white drop-shadow-[0_3px_12px_rgba(0,0,0,0.6)] hover:bg-white/10 rounded-lg transition-colors text-sm font-medium'
+    : isLight
+      ? 'flex items-center space-x-2 px-4 py-2 text-neutral-700 hover:text-neutral-900 transition-colors text-sm font-medium'
+      : 'flex items-center space-x-2 px-4 py-2 text-secondary hover:text-primary transition-colors text-sm font-medium'
+
   return (
     <motion.nav
+      role="navigation"
+      aria-label="Main"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'glass shadow-lg shadow-cyber-blue/10' : 'bg-transparent'
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBackgroundClass}`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-20">
           {/* Logo - Far Left */}
-          <Link href="/" className="flex items-center space-x-3 group flex-shrink-0">
-            <div className="relative">
+          <Link href="/" className="flex items-center flex-shrink-0">
               <Image 
-                src="/image0 (1).png" 
-                alt="VirtuXYZ Logo" 
-                width={40} 
-                height={40}
-                className="relative z-10"
-              />
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-cyber-blue via-cyber-purple to-cyber-pink bg-clip-text text-transparent">
-              VirtuXYZ
-            </span>
+              src="/full logo.png"
+              alt="VirtuXYZ"
+              width={180}
+              height={48}
+              priority
+              className="h-10 w-auto object-contain drop-shadow-lg"
+            />
           </Link>
 
           {/* Desktop Navigation - Centered */}
@@ -66,7 +86,7 @@ export default function Navbar() {
                     const element = document.querySelector(item.href)
                     element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                   }}
-                  className="px-3 py-2 rounded-lg text-secondary hover:text-primary hover:bg-white/5 transition-all duration-300 cursor-pointer text-sm font-medium whitespace-nowrap"
+                  className={`${navLinkClass} cursor-pointer`}
                 >
                   {item.name}
                 </a>
@@ -74,7 +94,7 @@ export default function Navbar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="px-3 py-2 rounded-lg text-secondary hover:text-primary hover:bg-white/5 transition-all duration-300 text-sm font-medium whitespace-nowrap"
+                  className={navLinkClass}
                 >
                   {item.name}
                 </Link>
@@ -85,10 +105,7 @@ export default function Navbar() {
           {/* CTA Buttons - Far Right */}
           <div className="hidden lg:flex items-center space-x-3 flex-shrink-0 ml-auto">
             <ThemeToggle />
-            <Link
-              href="/login"
-              className="flex items-center space-x-2 px-4 py-2 text-secondary hover:text-primary transition-colors text-sm font-medium"
-            >
+            <Link href="/login" className={authLinkClass}>
               <User className="w-4 h-4" />
               <span>Sign In</span>
             </Link>
@@ -102,8 +119,12 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 rounded-lg glass-hover"
+            aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            aria-expanded={isOpen}
+            aria-controls="mobile-main-menu"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -114,10 +135,17 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-main-menu"
+            role="menu"
+            aria-label="Mobile main navigation"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden glass border-t border-cyber-blue/20"
+            className={`md:hidden border-t ${
+              isLight
+                ? 'bg-white shadow-lg border-neutral-200'
+                : 'glass border-cyber-blue/20'
+            }`}
           >
             <div className="container mx-auto px-4 py-4 space-y-2">
               {navItems.map((item) => (
@@ -131,7 +159,9 @@ export default function Navbar() {
                       const element = document.querySelector(item.href)
                       element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                     }}
-                    className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-white/5 dark:hover:bg-white/5 light:hover:bg-black/5 transition-all cursor-pointer"
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all cursor-pointer ${
+                      isLight ? 'text-neutral-800 hover:bg-neutral-100' : 'hover:bg-white/5'
+                    }`}
                   >
                     <item.icon className="w-5 h-5 text-cyber-blue" />
                     <span>{item.name}</span>
@@ -141,7 +171,9 @@ export default function Navbar() {
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-white/5 dark:hover:bg-white/5 light:hover:bg-black/5 transition-all"
+                    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all ${
+                      isLight ? 'text-neutral-800 hover:bg-neutral-100' : 'hover:bg-white/5'
+                    }`}
                   >
                     <item.icon className="w-5 h-5 text-cyber-blue" />
                     <span>{item.name}</span>
@@ -150,13 +182,15 @@ export default function Navbar() {
               ))}
               <div className="pt-4 space-y-2 border-t border-cyber-blue/20">
                 <div className="flex items-center justify-between px-4 py-3">
-                  <span className="text-sm text-gray-400">Theme</span>
+                  <span className={`text-sm ${isLight ? 'text-neutral-500' : 'text-gray-400'}`}>Theme</span>
                   <ThemeToggle />
                 </div>
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}
-                  className="block px-4 py-3 rounded-lg hover:bg-white/5 transition-all"
+                  className={`block px-4 py-3 rounded-lg transition-all ${
+                    isLight ? 'text-neutral-800 hover:bg-neutral-100' : 'hover:bg-white/5'
+                  }`}
                 >
                   Sign In
                 </Link>

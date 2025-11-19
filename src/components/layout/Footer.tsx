@@ -1,7 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { Sparkles, Mail, Phone, MapPin, Twitter, Linkedin, Instagram, Youtube } from 'lucide-react'
+import Image from 'next/image'
+import { Mail, Phone, MapPin, Twitter, Linkedin, Instagram, Youtube } from 'lucide-react'
 
 export default function Footer() {
   const footerLinks = {
@@ -18,15 +19,15 @@ export default function Footer() {
       { name: 'Blog', href: '/blog' },
     ],
     Resources: [
-      { name: 'Help Center', href: '/help' },
-      { name: 'API Documentation', href: '/docs' },
+      { name: 'Help Center', href: '/help-center' },
+      { name: 'API Documentation', href: '/api-docs' },
       { name: 'Pricing', href: '/pricing' },
       { name: 'Contact', href: '/contact' },
     ],
     Legal: [
-      { name: 'Privacy Policy', href: '/privacy' },
+      { name: 'Privacy Policy', href: '/privacy-policy' },
       { name: 'Terms of Service', href: '/terms' },
-      { name: 'Cookie Policy', href: '/cookies' },
+      { name: 'Cookie Policy', href: '/cookie-policy' },
       { name: 'GDPR', href: '/gdpr' },
     ],
   }
@@ -44,11 +45,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 mb-12">
           {/* Brand Section */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center space-x-2 mb-4 group">
-              <Sparkles className="w-8 h-8 text-cyber-blue" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-cyber-blue via-cyber-purple to-cyber-pink bg-clip-text text-transparent">
-                VirtuXYZ
-              </span>
+            <Link href="/" className="flex items-center mb-4">
+              <Image
+                src="/full logo.png"
+                alt="VirtuXYZ"
+                width={200}
+                height={60}
+                className="h-12 w-auto object-contain drop-shadow-lg"
+              />
             </Link>
             <p className="text-secondary mb-6 max-w-sm">
               Experience the future of real estate with AI-powered virtual tours, smart analytics, and immersive 3D property exploration.

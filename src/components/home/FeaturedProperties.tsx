@@ -1,64 +1,68 @@
 'use client'
 
+import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Bed, Bath, Square, Heart, Eye, Sparkles } from 'lucide-react'
+import { MapPin, Bed, Bath, Square, Heart, Eye, Sparkles, Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Property, formatArea, formatPrice } from '@/hooks/useProperties'
+
+type FeaturedProperty = Property & { aiScore: number; badge?: string }
 
 export default function FeaturedProperties() {
-  const properties = [
-    {
-      id: 1,
-      title: 'Modern Luxury Villa',
-      location: 'Beverly Hills, CA',
-      price: '$4,500,000',
-      image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800',
-      beds: 5,
-      baths: 4,
-      sqft: '4,200',
-      aiScore: 98,
-      featured: true
-    },
-    {
-      id: 2,
-      title: 'Smart Penthouse',
-      location: 'Manhattan, NY',
-      price: '$8,200,000',
-      image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800',
-      beds: 4,
-      baths: 3,
-      sqft: '3,800',
-      aiScore: 95,
-      featured: true
-    },
-    {
-      id: 3,
-      title: 'Eco-Friendly Estate',
-      location: 'Austin, TX',
-      price: '$2,800,000',
-      image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
-      beds: 6,
-      baths: 5,
-      sqft: '5,500',
-      aiScore: 92,
-      featured: false
-    },
-    {
-      id: 4,
-      title: 'Waterfront Condo',
-      location: 'Miami Beach, FL',
-      price: '$3,600,000',
-      image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800',
-      beds: 3,
-      baths: 3,
-      sqft: '2,900',
-      aiScore: 94,
-      featured: false
+  const [properties, setProperties] = useState<FeaturedProperty[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    let active = true
+
+    const fetchFeatured = async () => {
+      try {
+        const response = await fetch('/api/properties/search?hitsPerPage=24&sort=verified-score', {
+          cache: 'no-store',
+        })
+        if (!response.ok) {
+          throw new Error('Failed to fetch featured properties')
+        }
+        const result = await response.json()
+        const apiProperties: Property[] = result?.data?.properties ?? []
+
+        const shuffled = [...apiProperties].sort(() => Math.random() - 0.5)
+        const topFour = shuffled.slice(0, 4).map((property, index) => ({
+          ...property,
+          aiScore: property.isVerified ? 98 - index : 90 + index,
+          badge: property.isVerified ? (index === 0 ? 'Luxury' : 'Featured') : index === 2 ? 'New Listing' : 'Waterfront',
+        }))
+
+        if (active) {
+          setProperties(topFour)
+        }
+      } catch (err) {
+        console.error(err)
+        if (active) {
+          setError('Unable to load featured listings right now.')
+        }
+      } finally {
+        if (active) {
+          setIsLoading(false)
+        }
+      }
     }
-  ]
+
+    fetchFeatured()
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const skeletonCards = useMemo(() => new Array(4).fill(null), [])
 
   return (
-    <section className="py-20 relative">
+    <section
+      className="py-20 relative"
+      aria-labelledby="featured-properties-heading"
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -68,7 +72,10 @@ export default function FeaturedProperties() {
           className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12"
         >
           <div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+            <h2
+              id="featured-properties-heading"
+              className="text-4xl md:text-5xl font-bold mb-4"
+            >
               <span className="bg-gradient-to-r from-cyber-blue via-cyber-purple to-cyber-pink bg-clip-text text-transparent">
                 Featured Properties
               </span>
@@ -82,98 +89,173 @@ export default function FeaturedProperties() {
           </Link>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {properties.map((property, index) => (
-            <motion.div
-              key={property.id}
+        {error && (
+          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50/60 text-red-700 px-4 py-3 text-sm">
+            {error}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
+          {(isLoading ? skeletonCards : properties).map((property, index) => {
+            if (!property) {
+              return (
+                <div
+                  key={`skeleton-${index}`}
+                  className="card-cyber p-0 overflow-hidden h-full flex flex-col animate-pulse"
+                >
+                  <div className="h-56 bg-white/10 dark:bg-white/5" />
+                  <div className="p-6 space-y-4">
+                    <div className="h-6 bg-white/10 dark:bg-white/5 rounded w-2/3" />
+                    <div className="h-4 bg-white/10 dark:bg-white/5 rounded w-1/2" />
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="h-10 bg-white/10 dark:bg-white/5 rounded" />
+                      <div className="h-10 bg-white/10 dark:bg-white/5 rounded" />
+                      <div className="h-10 bg-white/10 dark:bg-white/5 rounded" />
+                    </div>
+                    <div className="h-10 bg-white/10 dark:bg-white/5 rounded w-1/2" />
+                  </div>
+                </div>
+              )
+            }
+
+            const propertyId = property.externalID || property.id
+            const primaryImage = property.coverImage || property.images?.[0] || ''
+            const location = `${property.location.area || ''}${property.location.area ? ', ' : ''}${property.location.city || 'UAE'}`
+            const badge = property.badge
+            const aiScore = property.aiScore
+            const listingTypeLabel = property.listingType === 'for-rent' ? 'For Rent' : 'For Sale'
+
+            return (
+            <motion.article
+              key={propertyId}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="group relative"
+              className="group relative h-full"
             >
-              <div className="card-cyber p-0 overflow-hidden h-full flex flex-col">
+              <div className="card-cyber p-0 overflow-hidden h-full flex flex-col focus-within:ring-2 focus-within:ring-cyber-blue focus-within:ring-offset-2 focus-within:ring-offset-transparent">
                 {/* Image */}
-                <div className="relative h-64 overflow-hidden">
+                <div className="relative aspect-[16/10] overflow-hidden">
                   <Image
-                    src={property.image}
+                    src={primaryImage || '/icon.png'}
                     alt={property.title}
                     fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 25vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   
                   {/* Overlay gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-cyber-darker via-transparent to-transparent opacity-60"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                   
                   {/* AI Score Badge */}
                   <div className="absolute top-4 left-4 px-3 py-1 glass rounded-full flex items-center space-x-2">
-                    <Sparkles className="w-4 h-4 text-cyber-blue" />
-                    <span className="text-sm font-semibold">AI Score: {property.aiScore}</span>
+                    <Sparkles className="w-4 h-4 text-cyber-blue" aria-hidden="true" />
+                    <span className="text-xs font-semibold">
+                      AI Score: <span className="sr-only">out of 100, </span>{property.aiScore}
+                    </span>
                   </div>
 
-                  {/* Featured Badge */}
-                  {property.featured && (
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-cyber-blue to-cyber-purple rounded-full">
-                      <span className="text-xs font-semibold">FEATURED</span>
+                  {/* Featured / Category Badge */}
+                  <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
+                    {badge && (
+                      <div className="px-3 py-1 rounded-full bg-gradient-to-r from-cyber-blue to-cyber-purple text-xs font-semibold flex items-center gap-1">
+                        <Star className="w-3 h-3" aria-hidden="true" />
+                        <span>{badge}</span>
                     </div>
                   )}
+                  </div>
 
-                  {/* Action Buttons */}
+                  {/* Quick actions */}
                   <div className="absolute bottom-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="p-2 glass rounded-lg hover:bg-white/20 transition-colors">
-                      <Heart className="w-5 h-5" />
+                    <button
+                      type="button"
+                      className="p-2 glass rounded-lg hover:bg-white/20 transition-colors"
+                      aria-label={`Save ${property.title} to favorites`}
+                    >
+                      <Heart className="w-5 h-5" aria-hidden="true" />
                     </button>
-                    <Link href={`/tours/${property.id}`} className="p-2 glass rounded-lg hover:bg-white/20 transition-colors">
-                      <Eye className="w-5 h-5" />
+                    <Link
+                      href={`/property/live/${propertyId}`}
+                      className="p-2 glass rounded-lg hover:bg-white/20 transition-colors"
+                      aria-label={`Quick view for ${property.title}`}
+                    >
+                      <Eye className="w-5 h-5" aria-hidden="true" />
                     </Link>
                   </div>
                 </div>
 
                 {/* Content */}
-                <div className="p-6 flex-1 flex flex-col">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-xl font-bold text-primary group-hover:text-accent transition-colors">
+                <div className="p-6 flex-1 flex flex-col gap-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="text-lg md:text-xl font-semibold text-primary group-hover:text-accent transition-colors line-clamp-2">
                       {property.title}
                     </h3>
                   </div>
 
-                  <div className="flex items-center text-secondary mb-4">
-                    <MapPin className="w-4 h-4 mr-2 text-cyber-blue" />
-                    <span className="text-sm">{property.location}</span>
+                  <div className="flex items-center text-secondary text-sm">
+                    <MapPin className="w-4 h-4 mr-2 text-cyber-blue flex-shrink-0" aria-hidden="true" />
+                    <span className="truncate" title={property.location}>
+                      {location}
+                    </span>
                   </div>
 
                   {/* Property Stats */}
-                  <div className="grid grid-cols-3 gap-4 mb-4 pb-4 border-b border-cyber-blue/20">
+                  <div className="grid grid-cols-3 gap-3 mb-2">
                     <div className="text-center">
-                      <Bed className="w-5 h-5 text-cyber-blue mx-auto mb-1" />
-                      <p className="text-sm text-secondary">{property.beds} Beds</p>
+                      <Bed className="w-5 h-5 text-cyber-blue mx-auto mb-1" aria-hidden="true" />
+                      <p className="text-xs text-secondary">{property.bedrooms} Beds</p>
                     </div>
                     <div className="text-center">
-                      <Bath className="w-5 h-5 text-cyber-blue mx-auto mb-1" />
-                      <p className="text-sm text-secondary">{property.baths} Baths</p>
+                      <Bath className="w-5 h-5 text-cyber-blue mx-auto mb-1" aria-hidden="true" />
+                      <p className="text-xs text-secondary">{property.bathrooms} Baths</p>
                     </div>
                     <div className="text-center">
-                      <Square className="w-5 h-5 text-cyber-blue mx-auto mb-1" />
-                      <p className="text-sm text-secondary">{property.sqft} sqft</p>
+                      <Square className="w-5 h-5 text-cyber-blue mx-auto mb-1" aria-hidden="true" />
+                      <p className="text-xs text-secondary">{formatArea(property.area, property.areaUnit)}</p>
                     </div>
                   </div>
 
-                  {/* Price */}
-                  <div className="flex items-center justify-between mt-auto">
+                  {/* Price & CTAs */}
+                  <div className="mt-auto space-y-3">
+                    <div className="flex items-baseline justify-between gap-3">
                     <span className="text-2xl font-bold bg-gradient-to-r from-cyber-blue to-cyber-purple bg-clip-text text-transparent">
-                      {property.price}
+                        {formatPrice(property.price, property.currency, property.rentFrequency)}
+                      </span>
+                      <span className="text-[11px] px-2 py-1 rounded-full bg-cyber-blue/10 text-cyber-blue font-medium uppercase tracking-wide">
+                        {listingTypeLabel}
                     </span>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Link
+                        href={`/property/live/${propertyId}`}
+                        className="flex-1 btn-cyber flex items-center justify-center text-sm"
+                        aria-label={`View full details for ${property.title}`}
+                      >
+                        View Details
+                      </Link>
                     <Link
-                      href={`/property/${property.id}`}
-                      className="px-4 py-2 rounded-lg bg-cyber-blue/10 hover:bg-cyber-blue/20 border border-cyber-blue/30 hover:border-cyber-blue transition-all text-sm font-semibold"
+                        href={`/property/live/${propertyId}?quickView=true`}
+                        className="flex-1 px-4 py-3 rounded-lg border border-cyber-blue/40 bg-white/5 hover:bg-white/10 text-sm font-semibold text-primary flex items-center justify-center transition-all"
+                        aria-label={`Open quick view for ${property.title}`}
                     >
-                      Details
+                        Quick View
                     </Link>
+                    </div>
                   </div>
                 </div>
               </div>
-            </motion.div>
-          ))}
+            </motion.article>
+            )
+          })}
+        </div>
+
+        {/* View All CTA for smaller screens */}
+        <div className="mt-10 flex justify-center md:hidden">
+          <Link href="/explore" className="btn-cyber w-full max-w-xs text-center">
+            View All Properties
+          </Link>
         </div>
       </div>
     </section>

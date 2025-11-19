@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const API_ENDPOINT =
   'https://zylalabs.com/api/11013/uae+real+estate+data++api/20814/properties?region=uae&page=0&hitsPerPage=10';
 
@@ -70,28 +72,66 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
   const property = await fetchProperty(params.id);
 
   return (
-    <main style={{ padding: '2rem', fontFamily: 'sans-serif' }}>
-      <h1>Property Details</h1>
-      <p>
-        Showing data for property ID: <strong>{params.id}</strong>
+    <main className="min-h-screen py-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Breadcrumbs */}
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-4 flex items-center text-xs sm:text-sm text-secondary gap-1 sm:gap-2"
+        >
+          <Link href="/" className="hover:text-primary">
+            Home
+          </Link>
+          <span aria-hidden="true">›</span>
+          <Link href="/properties" className="hover:text-primary">
+            Properties
+          </Link>
+          <span aria-hidden="true">›</span>
+          <span aria-current="page" className="text-primary font-medium truncate max-w-[160px]">
+            {property?.title ?? 'Property'}
+          </span>
+        </nav>
+
+        <h1 className="text-3xl md:text-4xl font-bold text-primary mb-4">
+          Property Details
+        </h1>
+        <p className="text-secondary mb-6">
+          Showing data for property ID:&nbsp;
+          <span className="font-semibold">{params.id}</span>
       </p>
 
       {property ? (
-        <section>
-          <h2>{property.title ?? 'Untitled Listing'}</h2>
-          <p>{property.description ?? 'No description provided.'}</p>
-          <dl>
-            <dt>Price</dt>
-            <dd>{property.price ?? 'N/A'} {property.currency ?? ''}</dd>
-            <dt>Location</dt>
-            <dd>{property.city ?? property.region ?? 'Unknown'}</dd>
+          <section
+            aria-label="Property summary"
+            className="card-cyber p-6 space-y-4 max-w-3xl"
+          >
+            <h2 className="text-2xl font-semibold text-primary">
+              {property.title ?? 'Untitled Listing'}
+            </h2>
+            <p className="text-secondary">
+              {property.description ?? 'No description provided.'}
+            </p>
+            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <dt className="text-tertiary text-sm mb-1">Price</dt>
+                <dd className="text-primary font-semibold">
+                  {property.price ?? 'N/A'} {property.currency ?? ''}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-tertiary text-sm mb-1">Location</dt>
+                <dd className="text-primary font-semibold">
+                  {property.city ?? property.region ?? 'Unknown'}
+                </dd>
+              </div>
           </dl>
         </section>
       ) : (
-        <p>
+          <p className="text-secondary">
           Property not found. The property with ID "{params.id}" could not be retrieved.
         </p>
       )}
+      </div>
     </main>
   );
 }

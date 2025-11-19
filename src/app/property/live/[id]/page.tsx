@@ -27,6 +27,7 @@ import {
   Calendar,
   Building2,
   Home as HomeIcon,
+  ChevronRight as ChevronRightIcon,
 } from 'lucide-react';
 import { usePropertyDetails, formatPrice, formatArea } from '@/hooks/useProperties';
 
@@ -87,6 +88,45 @@ export default function LivePropertyDetailsPage({ params }: { params: { id: stri
   return (
     <div className="min-h-screen py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Breadcrumbs */}
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-4 flex items-center text-xs sm:text-sm text-secondary gap-1 sm:gap-2"
+        >
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyber-blue rounded-md px-1"
+          >
+            <HomeIcon className="w-4 h-4" aria-hidden="true" />
+            <span className="hidden xs:inline">Home</span>
+          </Link>
+          <ChevronRightIcon className="w-3 h-3" aria-hidden="true" />
+          <Link
+            href="/properties"
+            className="hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyber-blue rounded-md px-1"
+          >
+            Properties
+          </Link>
+          {property.location.city && (
+            <>
+              <ChevronRightIcon className="w-3 h-3" aria-hidden="true" />
+              <Link
+                href={`/properties?location=${encodeURIComponent(property.location.city)}`}
+                className="hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyber-blue rounded-md px-1 max-w-[120px] truncate"
+              >
+                {property.location.city}
+              </Link>
+            </>
+          )}
+          <ChevronRightIcon className="w-3 h-3" aria-hidden="true" />
+          <span
+            aria-current="page"
+            className="text-primary font-medium max-w-[140px] truncate"
+          >
+            {property.propertyType}
+          </span>
+        </nav>
+
         {/* Back Button */}
         <Link
           href="/properties"
@@ -115,16 +155,20 @@ export default function LivePropertyDetailsPage({ params }: { params: { id: stri
               {/* Gallery Controls */}
               <div className="absolute inset-0 flex items-center justify-between p-4">
                 <button
+                  type="button"
                   onClick={prevImage}
                   className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors"
+                  aria-label="View previous image"
                 >
-                  <ChevronLeft className="w-6 h-6 text-white" />
+                  <ChevronLeft className="w-6 h-6 text-white" aria-hidden="true" />
                 </button>
                 <button
+                  type="button"
                   onClick={nextImage}
                   className="w-12 h-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors"
+                  aria-label="View next image"
                 >
-                  <ChevronRight className="w-6 h-6 text-white" />
+                  <ChevronRight className="w-6 h-6 text-white" aria-hidden="true" />
                 </button>
               </div>
 
@@ -135,10 +179,12 @@ export default function LivePropertyDetailsPage({ params }: { params: { id: stri
 
               {/* Expand Button */}
               <button
+                type="button"
                 onClick={() => setShowGallery(true)}
                 className="absolute top-4 right-4 w-12 h-12 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center hover:bg-black/70 transition-colors"
+                aria-label="Open full screen gallery"
               >
-                <Maximize2 className="w-6 h-6 text-white" />
+                <Maximize2 className="w-6 h-6 text-white" aria-hidden="true" />
               </button>
 
               {/* Verified Badge */}
@@ -176,13 +222,23 @@ export default function LivePropertyDetailsPage({ params }: { params: { id: stri
                 </div>
                 <div className="flex gap-2">
                   <button
+                    type="button"
                     onClick={() => setIsFavorite(!isFavorite)}
                     className="w-12 h-12 rounded-full glass-hover flex items-center justify-center"
+                    aria-pressed={isFavorite}
+                    aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
                   >
-                    <Heart className={`w-6 h-6 ${isFavorite ? 'fill-current text-red-500' : 'text-secondary'}`} />
+                    <Heart
+                      className={`w-6 h-6 ${isFavorite ? 'fill-current text-red-500' : 'text-secondary'}`}
+                      aria-hidden="true"
+                    />
                   </button>
-                  <button className="w-12 h-12 rounded-full glass-hover flex items-center justify-center">
-                    <Share2 className="w-6 h-6 text-secondary" />
+                  <button
+                    type="button"
+                    className="w-12 h-12 rounded-full glass-hover flex items-center justify-center"
+                    aria-label="Share this property"
+                  >
+                    <Share2 className="w-6 h-6 text-secondary" aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -345,12 +401,20 @@ export default function LivePropertyDetailsPage({ params }: { params: { id: stri
 
               {/* Contact Buttons */}
               <div className="space-y-3">
-                <button className="w-full btn-cyber flex items-center justify-center gap-2">
-                  <Phone className="w-5 h-5" />
+                <button
+                  type="button"
+                  className="w-full btn-cyber flex items-center justify-center gap-2"
+                  aria-label="Call the listing agent"
+                >
+                  <Phone className="w-5 h-5" aria-hidden="true" />
                   <span>Call Agent</span>
                 </button>
-                <button className="w-full btn-cyber flex items-center justify-center gap-2">
-                  <Mail className="w-5 h-5" />
+                <button
+                  type="button"
+                  className="w-full btn-cyber flex items-center justify-center gap-2"
+                  aria-label="Email the listing agent"
+                >
+                  <Mail className="w-5 h-5" aria-hidden="true" />
                   <span>Email Agent</span>
                 </button>
               </div>
@@ -386,10 +450,12 @@ export default function LivePropertyDetailsPage({ params }: { params: { id: stri
             onClick={() => setShowGallery(false)}
           >
             <button
+              type="button"
               onClick={() => setShowGallery(false)}
               className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors z-10"
+              aria-label="Close full screen gallery"
             >
-              <X className="w-6 h-6 text-white" />
+              <X className="w-6 h-6 text-white" aria-hidden="true" />
             </button>
 
             <div className="relative w-full max-w-6xl h-full flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
@@ -403,23 +469,27 @@ export default function LivePropertyDetailsPage({ params }: { params: { id: stri
                   />
 
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       prevImage();
                     }}
                     className="absolute left-4 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+                    aria-label="View previous gallery image"
                   >
-                    <ChevronLeft className="w-6 h-6 text-white" />
+                    <ChevronLeft className="w-6 h-6 text-white" aria-hidden="true" />
                   </button>
 
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       nextImage();
                     }}
                     className="absolute right-4 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors"
+                    aria-label="View next gallery image"
                   >
-                    <ChevronRight className="w-6 h-6 text-white" />
+                    <ChevronRight className="w-6 h-6 text-white" aria-hidden="true" />
                   </button>
                 </>
               )}
