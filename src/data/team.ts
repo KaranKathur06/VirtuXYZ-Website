@@ -38,7 +38,7 @@ export const leadership: TeamMember[] = [
     role: 'Chief Marketing Officer (CMO)',
     impact:
       '15+ years in global marketing and networking, including export leadership at Falcon Company in Rajkot.',
-    photo: '/team/Hardik.jpg',
+    photo: '/team/Hardik.jpeg',
   },
 ]
 
