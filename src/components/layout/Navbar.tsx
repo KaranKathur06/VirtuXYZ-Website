@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Menu, X, Home, Search, BarChart3, Building2, User, Sparkles } from 'lucide-react'
+import { Menu, X, Home, Search, BarChart3, Building2, User, Users, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ThemeToggle from './ThemeToggle'
 import { useTheme } from '@/lib/theme-context'
@@ -29,6 +29,7 @@ export default function Navbar() {
     { name: 'Live Demos', href: '#live-demos', icon: Search },
     { name: 'Solutions', href: '#solutions', icon: Building2 },
     { name: 'Properties', href: '/explore', icon: Building2 },
+    { name: 'Team', href: '/team', icon: Users },
   ]
 
   const overlayMode = isLight && !scrolled

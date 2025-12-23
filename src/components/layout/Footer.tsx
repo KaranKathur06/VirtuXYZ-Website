@@ -14,6 +14,7 @@ export default function Footer() {
     ],
     Company: [
       { name: 'About Us', href: '/about' },
+      { name: 'Team', href: '/team' },
       { name: 'Careers', href: '/careers' },
       { name: 'Press', href: '/press' },
       { name: 'Blog', href: '/blog' },
