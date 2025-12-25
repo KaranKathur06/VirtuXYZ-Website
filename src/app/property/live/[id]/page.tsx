@@ -188,7 +188,7 @@ export default function LivePropertyDetailsPage({ params }: { params: { id: stri
               </button>
 
               {/* Verified Badge */}
-              {property.isVerified && (
+              {false && property?.isVerified && (
                 <div className="absolute top-4 left-4 px-4 py-2 rounded-full bg-green-500/90 backdrop-blur-sm text-white text-sm font-medium flex items-center gap-2">
                   <CheckCircle className="w-4 h-4" />
                   Verified Property

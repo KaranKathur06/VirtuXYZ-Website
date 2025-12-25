@@ -2,12 +2,12 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Bed, Bath, Square, Heart, Eye, Sparkles, Star } from 'lucide-react'
+import { MapPin, Bed, Bath, Square, Heart, Eye, Star } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Property, formatArea, formatPrice } from '@/hooks/useProperties'
 
-type FeaturedProperty = Property & { aiScore: number; badge?: string }
+type FeaturedProperty = Property & { badge?: string }
 
 export default function FeaturedProperties() {
   const [properties, setProperties] = useState<FeaturedProperty[]>([])
@@ -19,7 +19,7 @@ export default function FeaturedProperties() {
 
     const fetchFeatured = async () => {
       try {
-        const response = await fetch('/api/properties/search?hitsPerPage=24&sort=verified-score', {
+        const response = await fetch('/api/properties/search?hitsPerPage=24&sort=date-desc', {
           cache: 'no-store',
         })
         if (!response.ok) {
@@ -31,8 +31,7 @@ export default function FeaturedProperties() {
         const shuffled = [...apiProperties].sort(() => Math.random() - 0.5)
         const topFour = shuffled.slice(0, 4).map((property, index) => ({
           ...property,
-          aiScore: property.isVerified ? 98 - index : 90 + index,
-          badge: property.isVerified ? (index === 0 ? 'Luxury' : 'Featured') : index === 2 ? 'New Listing' : 'Waterfront',
+          badge: index === 0 ? 'Featured' : index === 1 ? 'New' : 'Preview',
         }))
 
         if (active) {
@@ -81,7 +80,7 @@ export default function FeaturedProperties() {
               </span>
             </h2>
             <p className="text-xl text-secondary">
-              Handpicked by AI based on market trends and user preferences
+              Curated previews while the platform is in early access
             </p>
           </div>
           <Link href="/explore" className="btn-cyber mt-6 md:mt-0">
@@ -122,7 +121,6 @@ export default function FeaturedProperties() {
             const primaryImage = property.coverImage || property.images?.[0] || ''
             const location = `${property.location.area || ''}${property.location.area ? ', ' : ''}${property.location.city || 'UAE'}`
             const badge = property.badge
-            const aiScore = property.aiScore
             const listingTypeLabel = property.listingType === 'for-rent' ? 'For Rent' : 'For Sale'
 
             return (
@@ -147,14 +145,6 @@ export default function FeaturedProperties() {
                   
                   {/* Overlay gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                  
-                  {/* AI Score Badge */}
-                  <div className="absolute top-4 left-4 px-3 py-1 glass rounded-full flex items-center space-x-2">
-                    <Sparkles className="w-4 h-4 text-cyber-blue" aria-hidden="true" />
-                    <span className="text-xs font-semibold">
-                      AI Score: <span className="sr-only">out of 100, </span>{property.aiScore}
-                    </span>
-                  </div>
 
                   {/* Featured / Category Badge */}
                   <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
@@ -162,8 +152,8 @@ export default function FeaturedProperties() {
                       <div className="px-3 py-1 rounded-full bg-gradient-to-r from-cyber-blue to-cyber-purple text-xs font-semibold flex items-center gap-1">
                         <Star className="w-3 h-3" aria-hidden="true" />
                         <span>{badge}</span>
-                    </div>
-                  )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Quick actions */}

@@ -1,12 +1,10 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { Play, X, ExternalLink } from 'lucide-react'
-import { useState } from 'react'
+import { motion } from 'framer-motion'
+import { Play, ExternalLink } from 'lucide-react'
+import Link from 'next/link'
 
 export default function LiveDemos() {
-  const [selectedDemo, setSelectedDemo] = useState<number | null>(null)
-
   const demos = [
     {
       id: 1,
@@ -14,7 +12,8 @@ export default function LiveDemos() {
       description: 'Explore a luxury apartment with our interactive 3D viewer',
       thumbnail: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
       badge: 'Three.js',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' // Replace with actual demo video
+      href: '/demo/web-tour',
+      status: 'coming-soon' as const,
     },
     {
       id: 2,
@@ -22,15 +21,17 @@ export default function LiveDemos() {
       description: 'Step into a virtual property showroom in the metaverse',
       thumbnail: 'linear-gradient(135deg, #06beb6 0%, #48b1bf 100%)',
       badge: 'Babylon.js',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' // Replace with actual demo video
+      href: '/demo/metaverse',
+      status: 'coming-soon' as const,
     },
     {
       id: 3,
       title: 'AI Assistant Demo',
       description: 'Chat with our intelligent property guide in real-time',
       thumbnail: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      badge: 'GPT-4 + Voice',
-      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ' // Replace with actual demo video
+      badge: 'AI + Voice',
+      href: '/demo/ai-assistant',
+      status: 'coming-soon' as const,
     }
   ]
 
@@ -65,10 +66,14 @@ export default function LiveDemos() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="group cursor-pointer"
-              onClick={() => setSelectedDemo(demo.id)}
+              className="group"
             >
-              <div className="card-cyber h-full overflow-hidden">
+              <Link
+                href={demo.href}
+                aria-label={`${demo.title} demo`}
+                className="block"
+              >
+                <div className="card-cyber h-full overflow-hidden">
                 {/* Thumbnail */}
                 <div className="relative h-48 mb-4 rounded-lg overflow-hidden">
                   <div 
@@ -98,74 +103,27 @@ export default function LiveDemos() {
                   <h3 className="text-xl font-bold mb-2 text-primary group-hover:text-accent transition-colors">
                     {demo.title}
                   </h3>
-                  <p className="text-secondary text-sm leading-relaxed mb-4">
+                  <p className="text-secondary text-base md:text-sm leading-relaxed mb-4">
                     {demo.description}
                   </p>
 
                   {/* Launch Button */}
-                  <button className="flex items-center space-x-2 text-cyber-blue hover:text-cyber-purple transition-colors group/btn">
-                    <span className="text-sm font-semibold">Launch Demo</span>
+                  <div className="flex items-center space-x-2 text-cyber-blue transition-colors group/btn">
+                    <span className="text-sm font-semibold">
+                      {demo.status === 'coming-soon' ? 'Coming Soon' : 'Launch Demo'}
+                    </span>
                     <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
+                  </div>
                 </div>
 
                 {/* Hover effect line */}
                 <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-to-r from-cyber-blue to-cyber-purple group-hover:w-full transition-all duration-500"></div>
-              </div>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>
       </div>
-
-      {/* Modal for Video Playback */}
-      <AnimatePresence>
-        {selectedDemo !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-            onClick={() => setSelectedDemo(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-4xl glass rounded-2xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Close Button */}
-              <button
-                onClick={() => setSelectedDemo(null)}
-                className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full glass-hover flex items-center justify-center group"
-              >
-                <X className="w-6 h-6 text-white group-hover:text-cyber-blue transition-colors" />
-              </button>
-
-              {/* Video Container */}
-              <div className="relative pt-[56.25%]">
-                <iframe
-                  className="absolute inset-0 w-full h-full"
-                  src={demos.find(d => d.id === selectedDemo)?.videoUrl}
-                  title="Demo Video"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-
-              {/* Demo Info */}
-              <div className="p-6 border-t border-cyber-blue/20">
-                <h3 className="text-2xl font-bold text-white mb-2">
-                  {demos.find(d => d.id === selectedDemo)?.title}
-                </h3>
-                <p className="text-secondary">
-                  {demos.find(d => d.id === selectedDemo)?.description}
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   )
 }

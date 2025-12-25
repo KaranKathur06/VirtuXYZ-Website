@@ -52,7 +52,7 @@ export default function LivePropertyCard({ property, index = 0 }: LivePropertyCa
 
             {/* Badges */}
             <div className="absolute top-3 left-3 flex flex-col gap-2">
-              {property.isVerified && (
+              {false && property.isVerified && (
                 <motion.div
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}

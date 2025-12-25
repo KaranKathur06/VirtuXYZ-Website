@@ -76,7 +76,7 @@ export default function WhatWeDo() {
                 <h3 className="text-xl font-bold text-primary mb-3 group-hover:text-accent transition-colors">
                   {service.title}
                 </h3>
-                <p className="text-secondary leading-relaxed text-sm">
+                <p className="text-secondary leading-relaxed text-base md:text-sm">
                   {service.description}
                 </p>
 
@@ -95,9 +95,17 @@ export default function WhatWeDo() {
           transition={{ duration: 0.6, delay: 0.4 }}
           className="flex justify-center"
         >
-          <button className="btn-primary">
+          <a
+            href="#solutions"
+            onClick={(e) => {
+              e.preventDefault()
+              const element = document.querySelector('#solutions')
+              element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }}
+            className="btn-primary"
+          >
             Compare All Services
-          </button>
+          </a>
         </motion.div>
       </div>
     </section>

@@ -210,10 +210,10 @@ export default function Hero() {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20"
           >
             {[
-              { value: '50K+', label: 'Properties' },
-              { value: '10K+', label: 'Virtual Tours' },
-              { value: '98%', label: 'Satisfaction' },
-              { value: '24/7', label: 'AI Support' },
+              { value: '0', label: 'Properties Listed' },
+              { value: '0', label: 'Active Users' },
+              { value: '0', label: 'Property Value Processed' },
+              { value: '—', label: 'Satisfaction Rate' },
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyber-blue to-cyber-purple bg-clip-text text-transparent mb-2">

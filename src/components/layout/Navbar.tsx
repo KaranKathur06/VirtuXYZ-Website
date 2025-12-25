@@ -14,6 +14,8 @@ export default function Navbar() {
   const { theme } = useTheme()
   const isLight = theme === 'light'
 
+  const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50)
@@ -106,6 +108,25 @@ export default function Navbar() {
           {/* CTA Buttons - Far Right */}
           <div className="hidden lg:flex items-center space-x-3 flex-shrink-0 ml-auto">
             <ThemeToggle />
+            {bookingUrl ? (
+              <a
+                href={bookingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline-cyber text-sm px-5 py-2.5"
+              >
+                Book a Demo
+              </a>
+            ) : (
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                className="btn-outline-cyber text-sm px-5 py-2.5 opacity-50 cursor-not-allowed"
+              >
+                Book a Demo
+              </button>
+            )}
             <Link href="/login" className={authLinkClass}>
               <User className="w-4 h-4" />
               <span>Sign In</span>
@@ -186,6 +207,26 @@ export default function Navbar() {
                   <span className={`text-sm ${isLight ? 'text-neutral-500' : 'text-gray-400'}`}>Theme</span>
                   <ThemeToggle />
                 </div>
+                {bookingUrl ? (
+                  <a
+                    href={bookingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setIsOpen(false)}
+                    className="block btn-outline-cyber text-center"
+                  >
+                    Book a Demo
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    disabled
+                    aria-disabled="true"
+                    className="block w-full btn-outline-cyber text-center opacity-50 cursor-not-allowed"
+                  >
+                    Book a Demo
+                  </button>
+                )}
                 <Link
                   href="/login"
                   onClick={() => setIsOpen(false)}

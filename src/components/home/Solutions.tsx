@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Users, TrendingUp, Heart, Building2, ThumbsUp } from 'lucide-react'
 import { useState } from 'react'
+import Link from 'next/link'
 
 export default function Solutions() {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null)
@@ -47,7 +48,7 @@ export default function Solutions() {
     {
       icon: Building2,
       title: 'For Real-Estate Agencies',
-      description: 'Empower your sales with immersive 3D tours and AI assistants available 24/7',
+      description: 'Empower your sales with immersive 3D tours and AI assistants available on-demand',
       features: [
         'Virtual Open Houses',
         'Lead Generation',
@@ -119,7 +120,7 @@ export default function Solutions() {
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.3, delay: index * 0.1 + idx * 0.05 }}
-                      className="flex items-center space-x-2 text-sm text-secondary"
+                      className="flex items-center space-x-2 text-base md:text-sm text-secondary"
                     >
                       <div className="w-1.5 h-1.5 rounded-full bg-cyber-blue"></div>
                       <span>{feature}</span>
@@ -128,9 +129,12 @@ export default function Solutions() {
                 </div>
 
                 {/* Learn More Button */}
-                <button className="mt-auto w-full py-2 rounded-lg border border-cyber-blue/30 text-cyber-blue hover:bg-cyber-blue/10 transition-all text-sm font-semibold">
+                <Link
+                  href="/contact"
+                  className="mt-auto w-full py-3 rounded-lg border border-cyber-blue/30 text-cyber-blue hover:bg-cyber-blue/10 transition-all text-sm font-semibold text-center"
+                >
                   Learn More
-                </button>
+                </Link>
 
                 {/* AI Avatar Reaction on Hover */}
                 <AnimatePresence>

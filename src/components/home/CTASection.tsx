@@ -41,7 +41,7 @@ export default function CTASection() {
             </h2>
 
             <p className="text-xl text-secondary mb-10 max-w-2xl mx-auto">
-              Join thousands of users who are already exploring properties with AI-powered intelligence
+              Get early access as we build AI-powered real estate experiences.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -62,14 +62,7 @@ export default function CTASection() {
 
             {/* Trust indicators */}
             <div className="mt-12 pt-8 border-t border-cyber-blue/20">
-              <p className="text-tertiary mb-4">Trusted by leading real estate companies</p>
-              <div className="flex flex-wrap items-center justify-center gap-8 opacity-60">
-                {['Zillow', 'Redfin', 'Realtor.com', 'Trulia'].map((company) => (
-                  <div key={company} className="text-2xl font-bold text-tertiary">
-                    {company}
-                  </div>
-                ))}
-              </div>
+              <p className="text-tertiary mb-4">Partner integrations coming soon</p>
             </div>
           </div>
         </motion.div>

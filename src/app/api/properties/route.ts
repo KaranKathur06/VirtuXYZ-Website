@@ -157,10 +157,10 @@ function generateMockProperties() {
       `https://images.unsplash.com/photo-${1600596542815 + i * 1000 + 500}-ffad4c1539a9?w=800`
     ],
     features: ['Balcony', 'Parking', 'Security', 'Gym', 'Pool'],
-    amenities: ['24/7 Security', 'Swimming Pool', 'Gym', 'Parking'],
+    amenities: ['Security', 'Swimming Pool', 'Gym', 'Parking'],
     furnished: Math.random() > 0.5,
     listingType: Math.random() > 0.5 ? 'sale' : 'rent',
     datePosted: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
-    externalUrl: '#'
+    externalUrl: undefined
   }))
 }

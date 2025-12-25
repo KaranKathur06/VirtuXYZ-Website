@@ -2,9 +2,11 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Mail, Phone, MapPin, Twitter, Linkedin, Instagram, Youtube } from 'lucide-react'
+import { Mail, Twitter, Linkedin, Github } from 'lucide-react'
 
 export default function Footer() {
+  const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL
+
   const footerLinks = {
     Platform: [
       { name: 'Explore Properties', href: '/explore' },
@@ -34,11 +36,12 @@ export default function Footer() {
   }
 
   const socialLinks = [
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Youtube, href: '#', label: 'YouTube' },
+    { icon: Linkedin, href: process.env.NEXT_PUBLIC_LINKEDIN_URL, label: 'LinkedIn' },
+    { icon: Twitter, href: process.env.NEXT_PUBLIC_TWITTER_URL, label: 'X' },
+    { icon: Github, href: process.env.NEXT_PUBLIC_GITHUB_URL, label: 'GitHub' },
   ]
+
+  const activeSocialLinks = socialLinks.filter((s) => Boolean(s.href))
 
   return (
     <footer className="relative mt-20 glass border-t border-cyber-blue/20">
@@ -61,16 +64,35 @@ export default function Footer() {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-secondary">
                 <Mail className="w-4 h-4 text-cyber-blue" />
-                <span>contact@virtuxyz.com</span>
+                <a
+                  href="mailto:contact@virtuxyz.com"
+                  className="hover:text-cyber-blue transition-colors"
+                >
+                  contact@virtuxyz.com
+                </a>
               </div>
-              <div className="flex items-center space-x-3 text-secondary">
-                <Phone className="w-4 h-4 text-cyber-blue" />
-                <span>+1 (555) 123-4567</span>
-              </div>
-              <div className="flex items-center space-x-3 text-secondary">
-                <MapPin className="w-4 h-4 text-cyber-blue" />
-                <span>San Francisco, CA</span>
-              </div>
+            </div>
+
+            <div className="mt-6">
+              {bookingUrl ? (
+                <a
+                  href={bookingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-cyber inline-flex items-center justify-center w-full sm:w-auto"
+                >
+                  Book a Demo
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  aria-disabled="true"
+                  className="btn-cyber inline-flex items-center justify-center w-full sm:w-auto opacity-50 cursor-not-allowed"
+                >
+                  Book a Demo (Coming Soon)
+                </button>
+              )}
             </div>
           </div>
 
@@ -101,11 +123,13 @@ export default function Footer() {
               © {new Date().getFullYear()} VirtuXYZ. All rights reserved. Powered by AI.
             </p>
             <div className="flex items-center space-x-4">
-              {socialLinks.map((social) => (
+              {activeSocialLinks.map((social) => (
                 <a
                   key={social.label}
-                  href={social.href}
+                  href={social.href as string}
                   aria-label={social.label}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 rounded-lg glass-hover transition-all hover:text-cyber-blue"
                 >
                   <social.icon className="w-5 h-5" />

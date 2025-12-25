@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { Brain, Eye, TrendingUp, MessageSquare, Sparkles, Zap } from 'lucide-react'
+import Link from 'next/link'
 
 export default function AIShowcase() {
   const aiFeatures = [
@@ -28,7 +29,7 @@ export default function AIShowcase() {
     },
     {
       icon: MessageSquare,
-      title: '24/7 AI Concierge',
+      title: 'AI Concierge',
       description: 'Instant answers to all your property questions, anytime',
       gradient: 'from-pink-500 to-red-500',
       delay: 0.8
@@ -116,21 +117,21 @@ export default function AIShowcase() {
                     transition={{ duration: 2, repeat: Infinity }}
                     className="absolute top-8 left-8 px-4 py-2 glass rounded-lg text-sm"
                   >
-                    <span className="text-cyber-blue">●</span> Market Value: $1.2M
+                    <span className="text-cyber-blue">●</span> Market Insights: —
                   </motion.div>
                   <motion.div
                     animate={{ y: [0, -10, 0] }}
                     transition={{ duration: 2, delay: 0.5, repeat: Infinity }}
                     className="absolute top-8 right-8 px-4 py-2 glass rounded-lg text-sm"
                   >
-                    <span className="text-cyber-purple">●</span> ROI: +15%
+                    <span className="text-cyber-purple">●</span> ROI Estimate: —
                   </motion.div>
                   <motion.div
                     animate={{ y: [0, -10, 0] }}
                     transition={{ duration: 2, delay: 1, repeat: Infinity }}
                     className="absolute bottom-8 left-1/2 transform -translate-x-1/2 px-4 py-2 glass rounded-lg text-sm"
                   >
-                    <span className="text-cyber-pink">●</span> Match Score: 98%
+                    <span className="text-cyber-pink">●</span> Match Score: —
                   </motion.div>
                 </div>
               </div>
@@ -158,9 +159,9 @@ export default function AIShowcase() {
                   </li>
                 ))}
               </ul>
-              <button className="btn-cyber">
+              <Link href="/ai-guide" className="btn-cyber">
                 Try AI Demo
-              </button>
+              </Link>
             </div>
           </div>
         </motion.div>

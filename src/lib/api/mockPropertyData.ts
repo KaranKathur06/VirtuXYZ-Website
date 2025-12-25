@@ -108,7 +108,7 @@ export const mockProperties: Property[] = [
       { externalID: "gym", text: "Gym", value: "yes", format: "boolean", slug: "gym" },
       { externalID: "pool", text: "Swimming Pool", value: "yes", format: "boolean", slug: "pool" },
       { externalID: "parking", text: "Covered Parking", value: "2", format: "number", slug: "parking" },
-      { externalID: "security", text: "24/7 Security", value: "yes", format: "boolean", slug: "security" },
+      { externalID: "security", text: "Security", value: "yes", format: "boolean", slug: "security" },
     ],
     amenities_l1: [],
     agent: {
@@ -145,10 +145,10 @@ export const mockProperties: Property[] = [
     },
     hash: "hash-001",
     keywords: ["luxury", "dubai", "marina", "apartment", "3bedroom"],
-    isVerified: true,
+    isVerified: false,
     verification: {
-      eligible: true,
-      status: "verified",
+      eligible: false,
+      status: "unknown",
       type: "property",
       comment: null,
     },

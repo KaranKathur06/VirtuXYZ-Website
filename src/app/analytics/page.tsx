@@ -14,66 +14,66 @@ export default function AnalyticsPage() {
   const marketStats = [
     {
       label: 'Average Price',
-      value: '$1.2M',
-      change: '+12.5%',
-      trend: 'up',
+      value: '—',
+      change: '—',
+      trend: 'neutral',
       icon: DollarSign,
       color: 'from-cyan-500 to-blue-500'
     },
     {
       label: 'Properties Sold',
-      value: '2,847',
-      change: '+8.3%',
-      trend: 'up',
+      value: '—',
+      change: '—',
+      trend: 'neutral',
       icon: Home,
       color: 'from-purple-500 to-pink-500'
     },
     {
       label: 'Days on Market',
-      value: '32',
-      change: '-15.2%',
-      trend: 'down',
+      value: '—',
+      change: '—',
+      trend: 'neutral',
       icon: TrendingDown,
       color: 'from-blue-500 to-purple-500'
     },
     {
       label: 'Market Score',
-      value: '94/100',
-      change: '+5.1%',
-      trend: 'up',
+      value: '—',
+      change: '—',
+      trend: 'neutral',
       icon: BarChart3,
       color: 'from-pink-500 to-red-500'
     }
   ]
 
   const topCities = [
-    { name: 'Manhattan, NY', avgPrice: '$2.8M', growth: '+18.2%', score: 98 },
-    { name: 'Beverly Hills, CA', avgPrice: '$4.2M', growth: '+15.7%', score: 96 },
-    { name: 'Miami Beach, FL', avgPrice: '$1.9M', growth: '+22.4%', score: 95 },
-    { name: 'Austin, TX', avgPrice: '$1.1M', growth: '+28.9%', score: 94 },
-    { name: 'Seattle, WA', avgPrice: '$1.5M', growth: '+12.3%', score: 92 }
+    { name: 'Sample Market A', avgPrice: '—', growth: '—', score: '—' },
+    { name: 'Sample Market B', avgPrice: '—', growth: '—', score: '—' },
+    { name: 'Sample Market C', avgPrice: '—', growth: '—', score: '—' },
+    { name: 'Sample Market D', avgPrice: '—', growth: '—', score: '—' },
+    { name: 'Sample Market E', avgPrice: '—', growth: '—', score: '—' }
   ]
 
   const investmentOpportunities = [
     {
       title: 'Emerging Markets',
-      description: 'High-growth areas with strong ROI potential',
-      locations: ['Austin', 'Phoenix', 'Nashville'],
-      roi: '+25-35%',
+      description: 'Early signals and indicators to watch as the platform evolves',
+      locations: ['—'],
+      roi: '—',
       risk: 'Medium'
     },
     {
       title: 'Luxury Segment',
-      description: 'Premium properties in established markets',
-      locations: ['Manhattan', 'Beverly Hills', 'Malibu'],
-      roi: '+15-20%',
+      description: 'Preview insights for premium listings (no verified performance data yet)',
+      locations: ['—'],
+      roi: '—',
       risk: 'Low'
     },
     {
       title: 'Tech Hubs',
-      description: 'Properties near major tech company offices',
-      locations: ['San Francisco', 'Seattle', 'San Jose'],
-      roi: '+20-28%',
+      description: 'Concept recommendations based on supply/demand signals',
+      locations: ['—'],
+      roi: '—',
       risk: 'Medium'
     }
   ]
@@ -102,6 +102,9 @@ export default function AnalyticsPage() {
             </h1>
             <p className="text-xl text-gray-300 max-w-3xl">
               Data-driven insights powered by AI to help you make smarter investment decisions
+            </p>
+            <p className="text-sm text-gray-500 mt-4 max-w-3xl">
+              Preview data only. Metrics will be updated as real platform data becomes available.
             </p>
           </motion.div>
 
@@ -154,9 +157,19 @@ export default function AnalyticsPage() {
                     <stat.icon className="w-6 h-6 text-white" />
                   </div>
                   <div className={`flex items-center space-x-1 px-2 py-1 rounded-full ${
-                    stat.trend === 'up' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                    stat.trend === 'up'
+                      ? 'bg-green-500/20 text-green-400'
+                      : stat.trend === 'down'
+                        ? 'bg-red-500/20 text-red-400'
+                        : 'bg-white/10 text-gray-300'
                   }`}>
-                    {stat.trend === 'up' ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                    {stat.trend === 'up' ? (
+                      <TrendingUp className="w-4 h-4" />
+                    ) : stat.trend === 'down' ? (
+                      <TrendingDown className="w-4 h-4" />
+                    ) : (
+                      <BarChart3 className="w-4 h-4" />
+                    )}
                     <span className="text-sm font-semibold">{stat.change}</span>
                   </div>
                 </div>

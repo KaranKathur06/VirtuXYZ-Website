@@ -199,7 +199,6 @@ export default function PropertiesPage() {
                   <option value="price-asc">Price: Low to High</option>
                   <option value="price-desc">Price: High to Low</option>
                   <option value="date-desc">Newest First</option>
-                  <option value="verified-score">Verified First</option>
                 </select>
               </div>
             </motion.div>

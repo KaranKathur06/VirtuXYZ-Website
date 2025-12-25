@@ -51,9 +51,7 @@ export default function ComingSoon({ title = 'Feature Launch in Progress' }: Com
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight">
-            A New Experience Is Coming
-          </h1>
+          <h1 className="text-3xl md:text-5xl font-bold tracking-tight">{title}</h1>
           <p className="text-lg md:text-xl text-[#9CA3AF] max-w-2xl mx-auto leading-relaxed">
             We’re building something powerful behind the scenes. Check back soon for the full experience.
           </p>

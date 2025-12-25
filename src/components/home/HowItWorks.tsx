@@ -98,7 +98,7 @@ export default function HowItWorks() {
                     <h3 className="text-xl font-bold text-primary mb-2">
                       {step.title}
                     </h3>
-                    <p className="text-secondary text-sm leading-relaxed">
+                    <p className="text-secondary text-base md:text-sm leading-relaxed">
                       {step.description}
                     </p>
                   </div>
@@ -145,9 +145,17 @@ export default function HowItWorks() {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="flex justify-center mt-16"
         >
-          <button className="btn-primary">
+          <a
+            href="#live-demos"
+            onClick={(e) => {
+              e.preventDefault()
+              const element = document.querySelector('#live-demos')
+              element?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }}
+            className="btn-primary"
+          >
             Experience the Journey
-          </button>
+          </a>
         </motion.div>
       </div>
     </section>

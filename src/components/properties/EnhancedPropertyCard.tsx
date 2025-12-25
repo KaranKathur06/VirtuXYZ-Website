@@ -72,7 +72,7 @@ export default function EnhancedPropertyCard({ property }: PropertyCardProps) {
                     AI Tour
                   </motion.div>
                 )}
-                {property.isVerified && (
+                {false && property.isVerified && (
                   <motion.div
                     initial={{ x: -20, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}

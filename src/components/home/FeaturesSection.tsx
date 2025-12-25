@@ -32,8 +32,8 @@ export default function FeaturesSection() {
     },
     {
       icon: Shield,
-      title: 'Verified Listings',
-      description: 'AI-verified property details and blockchain-secured transactions',
+      title: 'Listing Transparency',
+      description: 'Clear listing details, photos, and key information designed for confident decisions',
       color: 'from-green-500 to-teal-500'
     },
     {

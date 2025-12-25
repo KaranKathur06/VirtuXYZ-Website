@@ -7,30 +7,30 @@ export default function StatsSection() {
   const stats = [
     {
       icon: Building,
-      value: '50,000+',
+      value: '0',
       label: 'Properties Listed',
-      description: 'Across 100+ cities',
+      description: '',
       color: 'from-cyan-500 to-blue-500'
     },
     {
       icon: Users,
-      value: '2M+',
-      label: 'Happy Customers',
-      description: 'Worldwide users',
+      value: '0',
+      label: 'Active Users',
+      description: '',
       color: 'from-purple-500 to-pink-500'
     },
     {
       icon: TrendingUp,
-      value: '$50B+',
-      label: 'Property Value',
-      description: 'Total transactions',
+      value: '0',
+      label: 'Property Value Processed',
+      description: '',
       color: 'from-blue-500 to-purple-500'
     },
     {
       icon: Award,
-      value: '98%',
+      value: '—',
       label: 'Satisfaction Rate',
-      description: 'Customer reviews',
+      description: '',
       color: 'from-pink-500 to-red-500'
     }
   ]
@@ -52,11 +52,11 @@ export default function StatsSection() {
             >
               <h2 className="text-4xl md:text-5xl font-bold mb-4">
                 <span className="bg-gradient-to-r from-cyber-blue via-cyber-purple to-cyber-pink bg-clip-text text-transparent">
-                  Trusted by Millions
+                  Building the Future of Real Estate Technology
                 </span>
               </h2>
               <p className="text-xl text-secondary">
-                Leading the future of real estate technology
+                Early-stage platform focused on AI-driven real estate innovation
               </p>
             </motion.div>
 
@@ -82,12 +82,18 @@ export default function StatsSection() {
                   <div className="text-xl font-semibold text-primary mb-1">
                     {stat.label}
                   </div>
-                  <div className="text-secondary">
-                    {stat.description}
-                  </div>
+                  {stat.description ? (
+                    <div className="text-secondary">
+                      {stat.description}
+                    </div>
+                  ) : null}
                 </motion.div>
               ))}
             </div>
+
+            <p className="mt-10 text-center text-sm text-tertiary">
+              Metrics will be updated as the platform grows.
+            </p>
           </div>
         </div>
       </div>
