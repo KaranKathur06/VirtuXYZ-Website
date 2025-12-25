@@ -113,7 +113,7 @@ export default function Navbar() {
                 href={bookingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-outline-cyber text-sm px-5 py-2.5"
+                className="btn-outline-cyber text-sm px-5 py-2.5 min-h-[44px] inline-flex items-center justify-center"
               >
                 Book a Demo
               </a>
@@ -122,7 +122,7 @@ export default function Navbar() {
                 type="button"
                 disabled
                 aria-disabled="true"
-                className="btn-outline-cyber text-sm px-5 py-2.5 opacity-50 cursor-not-allowed"
+                className="btn-outline-cyber text-sm px-5 py-2.5 min-h-[44px] inline-flex items-center justify-center opacity-50 cursor-not-allowed"
               >
                 Book a Demo
               </button>
@@ -213,7 +213,7 @@ export default function Navbar() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setIsOpen(false)}
-                    className="block btn-outline-cyber text-center"
+                    className="block btn-outline-cyber text-center min-h-[44px] inline-flex items-center justify-center"
                   >
                     Book a Demo
                   </a>
@@ -222,7 +222,7 @@ export default function Navbar() {
                     type="button"
                     disabled
                     aria-disabled="true"
-                    className="block w-full btn-outline-cyber text-center opacity-50 cursor-not-allowed"
+                    className="block w-full btn-outline-cyber text-center min-h-[44px] inline-flex items-center justify-center opacity-50 cursor-not-allowed"
                   >
                     Book a Demo
                   </button>

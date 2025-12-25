@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Mail, Twitter, Linkedin, Github } from 'lucide-react'
+import { Mail, Twitter, Linkedin, Facebook, Youtube } from 'lucide-react'
 
 export default function Footer() {
   const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL
@@ -36,9 +36,26 @@ export default function Footer() {
   }
 
   const socialLinks = [
-    { icon: Linkedin, href: process.env.NEXT_PUBLIC_LINKEDIN_URL, label: 'LinkedIn' },
-    { icon: Twitter, href: process.env.NEXT_PUBLIC_TWITTER_URL, label: 'X' },
-    { icon: Github, href: process.env.NEXT_PUBLIC_GITHUB_URL, label: 'GitHub' },
+    {
+      icon: Twitter,
+      href: 'https://x.com/virtuxyz',
+      label: 'X',
+    },
+    {
+      icon: Facebook,
+      href: 'https://www.facebook.com/virtuxyz/',
+      label: 'Facebook',
+    },
+    {
+      icon: Youtube,
+      href: 'https://www.youtube.com/@virtuxyz',
+      label: 'YouTube',
+    },
+    {
+      icon: Linkedin,
+      href: 'https://www.linkedin.com/company/virtuxyz/',
+      label: 'LinkedIn',
+    },
   ]
 
   const activeSocialLinks = socialLinks.filter((s) => Boolean(s.href))
@@ -79,7 +96,7 @@ export default function Footer() {
                   href={bookingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-cyber inline-flex items-center justify-center w-full sm:w-auto"
+                  className="btn-cyber inline-flex items-center justify-center w-full sm:w-auto min-h-[44px]"
                 >
                   Book a Demo
                 </a>
@@ -88,7 +105,7 @@ export default function Footer() {
                   type="button"
                   disabled
                   aria-disabled="true"
-                  className="btn-cyber inline-flex items-center justify-center w-full sm:w-auto opacity-50 cursor-not-allowed"
+                  className="btn-cyber inline-flex items-center justify-center w-full sm:w-auto min-h-[44px] opacity-50 cursor-not-allowed"
                 >
                   Book a Demo (Coming Soon)
                 </button>
@@ -130,7 +147,7 @@ export default function Footer() {
                   aria-label={social.label}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg glass-hover transition-all hover:text-cyber-blue"
+                  className="p-2 rounded-lg glass-hover transition-all hover:text-cyber-blue hover:scale-105 hover:shadow-[0_0_12px_rgba(34,231,255,0.25)]"
                 >
                   <social.icon className="w-5 h-5" />
                 </a>
