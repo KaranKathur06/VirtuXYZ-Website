@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { Mail, Twitter, Linkedin, Facebook, Youtube } from 'lucide-react'
 
 export default function Footer() {
-  const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL
+  const bookingUrl = 'https://calendar.app.google/kA9K5gvLXzqJRHD99'
 
   const footerLinks = {
     Platform: [
@@ -82,34 +82,23 @@ export default function Footer() {
               <div className="flex items-center space-x-3 text-secondary">
                 <Mail className="w-4 h-4 text-cyber-blue" />
                 <a
-                  href="mailto:contact@virtuxyz.com"
+                  href="mailto:admin@virtuxyz.com"
                   className="hover:text-cyber-blue transition-colors"
                 >
-                  contact@virtuxyz.com
+                  admin@virtuxyz.com
                 </a>
               </div>
             </div>
 
             <div className="mt-6">
-              {bookingUrl ? (
-                <a
-                  href={bookingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-cyber inline-flex items-center justify-center w-full sm:w-auto min-h-[44px]"
-                >
-                  Book a Demo
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  disabled
-                  aria-disabled="true"
-                  className="btn-cyber inline-flex items-center justify-center w-full sm:w-auto min-h-[44px] opacity-50 cursor-not-allowed"
-                >
-                  Book a Demo (Coming Soon)
-                </button>
-              )}
+              <a
+                href={bookingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-cyber inline-flex items-center justify-center w-full sm:w-auto min-h-[44px]"
+              >
+                Book a Demo
+              </a>
             </div>
           </div>
 
