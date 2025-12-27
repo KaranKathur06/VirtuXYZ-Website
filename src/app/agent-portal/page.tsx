@@ -3,12 +3,32 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Upload, Image as ImageIcon, Sparkles, Wand2, DollarSign, MapPin, Home, Bed, Bath, Square, Check } from 'lucide-react'
+import { signIn, signOut, useSession } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import ParticleBackground from '@/components/effects/ParticleBackground'
 import toast from 'react-hot-toast'
 
 export default function AgentPortalPage() {
+  const { data: session, status } = useSession()
+  const searchParams = useSearchParams()
+  const initialMode = searchParams.get('mode') === 'register' ? 'register' : 'login'
+  const [mode, setMode] = useState<'login' | 'register'>(initialMode)
+
+  const [loginEmail, setLoginEmail] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
+
+  const [firstName, setFirstName] = useState('')
+  const [middleName, setMiddleName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [email, setEmail] = useState('')
+  const [companyName, setCompanyName] = useState('')
+  const [profilePhoto, setProfilePhoto] = useState<File | null>(null)
+  const [isRegistering, setIsRegistering] = useState(false)
+
   const [uploadedImages, setUploadedImages] = useState<string[]>([])
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [aiSuggestions, setAiSuggestions] = useState<any>(null)
@@ -42,6 +62,69 @@ export default function AgentPortalPage() {
     }, 2000)
   }
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoggingIn(true)
+    try {
+      const res = await signIn('credentials', {
+        redirect: false,
+        email: loginEmail,
+        password: loginPassword,
+      })
+
+      if (res?.ok) {
+        toast.success('Logged in')
+        return
+      }
+
+      toast.error('Invalid email or password')
+    } catch {
+      toast.error('Login failed')
+    } finally {
+      setIsLoggingIn(false)
+    }
+  }
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!firstName || !lastName || !phoneNumber || !email || !companyName || !profilePhoto) {
+      toast.error('Please fill all required fields')
+      return
+    }
+
+    setIsRegistering(true)
+    try {
+      const fd = new FormData()
+      fd.append('firstName', firstName)
+      fd.append('middleName', middleName)
+      fd.append('lastName', lastName)
+      fd.append('phoneNumber', phoneNumber)
+      fd.append('email', email)
+      fd.append('companyName', companyName)
+      fd.append('profilePhoto', profilePhoto)
+
+      const res = await fetch('/api/agents/register', {
+        method: 'POST',
+        body: fd,
+      })
+
+      const data = await res.json().catch(() => null)
+      if (!res.ok) {
+        toast.error(data?.error || 'Registration failed')
+        return
+      }
+
+      toast.success('Registration submitted. Check your email for credentials.')
+      setMode('login')
+      setLoginEmail(email)
+      setLoginPassword('')
+    } catch {
+      toast.error('Registration failed')
+    } finally {
+      setIsRegistering(false)
+    }
+  }
+
   return (
     <main className="relative min-h-screen">
       <ParticleBackground />
@@ -68,6 +151,156 @@ export default function AgentPortalPage() {
               List properties faster with AI-powered auto-fill, smart pricing, and SEO optimization
             </p>
           </motion.div>
+
+          {status === 'loading' ? (
+            <div className="card-cyber max-w-xl mx-auto">
+              <p className="text-gray-300">Loading...</p>
+            </div>
+          ) : !session ? (
+            <div className="card-cyber max-w-xl mx-auto">
+              <div className="flex items-center justify-center gap-2 mb-6">
+                <button
+                  type="button"
+                  onClick={() => setMode('login')}
+                  className={mode === 'login' ? 'btn-cyber' : 'btn-outline-cyber'}
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode('register')}
+                  className={mode === 'register' ? 'btn-cyber' : 'btn-outline-cyber'}
+                >
+                  Register
+                </button>
+              </div>
+
+              {mode === 'login' ? (
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Email</label>
+                    <input
+                      type="email"
+                      className="input-cyber"
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Password</label>
+                    <input
+                      type="password"
+                      className="input-cyber"
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={isLoggingIn}
+                    className="btn-cyber w-full"
+                  >
+                    {isLoggingIn ? 'Logging in...' : 'Login'}
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={handleRegister} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-2">First Name</label>
+                      <input
+                        type="text"
+                        className="input-cyber"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-2">Middle Name</label>
+                      <input
+                        type="text"
+                        className="input-cyber"
+                        value={middleName}
+                        onChange={(e) => setMiddleName(e.target.value)}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-2">Last Name</label>
+                      <input
+                        type="text"
+                        className="input-cyber"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Contact Number (with country code)</label>
+                    <input
+                      type="tel"
+                      className="input-cyber"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Email</label>
+                    <input
+                      type="email"
+                      className="input-cyber"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Company Name</label>
+                    <input
+                      type="text"
+                      className="input-cyber"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-2">Profile Photo (JPG/PNG)</label>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png"
+                      className="input-cyber"
+                      onChange={(e) => setProfilePhoto(e.target.files?.[0] ?? null)}
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isRegistering}
+                    className="btn-cyber w-full"
+                  >
+                    {isRegistering ? 'Submitting...' : 'Submit Registration'}
+                  </button>
+                </form>
+              )}
+            </div>
+          ) : session.user?.role !== 'AGENT' ? (
+            <div className="card-cyber max-w-xl mx-auto text-center">
+              <p className="text-gray-300 mb-4">You are logged in but do not have AGENT access.</p>
+              <button type="button" className="btn-outline-cyber" onClick={() => signOut()}>
+                Sign out
+              </button>
+            </div>
+          ) : (
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Upload Section */}
@@ -334,6 +567,7 @@ export default function AgentPortalPage() {
               )}
             </motion.div>
           </div>
+          )}
         </div>
       </div>
 

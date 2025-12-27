@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import AIConcierge from '@/components/ai/AIConcierge'
 import { ThemeProvider } from '@/lib/theme-context'
 import { QueryClientProvider } from '@/components/providers/QueryProvider'
+import { AuthProvider } from '@/components/providers/AuthProvider'
 
 const SITE_URL = 'https://www.virtuxyz.com'
 
@@ -59,23 +60,25 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} antialiased`}>
-        <QueryClientProvider>
-          <ThemeProvider>
-            {children}
-            <AIConcierge />
-            <Toaster 
-              position="top-right"
-              toastOptions={{
-                className: 'glass',
-                style: {
-                  background: 'var(--surface)',
-                  color: 'var(--text-primary)',
-                  border: '1px solid var(--border)',
-                },
-              }}
-            />
-          </ThemeProvider>
-        </QueryClientProvider>
+        <AuthProvider>
+          <QueryClientProvider>
+            <ThemeProvider>
+              {children}
+              <AIConcierge />
+              <Toaster 
+                position="top-right"
+                toastOptions={{
+                  className: 'glass',
+                  style: {
+                    background: 'var(--surface)',
+                    color: 'var(--text-primary)',
+                    border: '1px solid var(--border)',
+                  },
+                }}
+              />
+            </ThemeProvider>
+          </QueryClientProvider>
+        </AuthProvider>
       </body>
     </html>
   )

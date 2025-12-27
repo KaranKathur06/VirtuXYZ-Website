@@ -94,6 +94,30 @@ export default function Hero() {
             smart analytics, and immersive 3D exploration
           </motion.p>
 
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.55 }}
+            className="max-w-3xl mx-auto mb-10"
+          >
+            <div className="rounded-2xl border border-white/10 bg-black/25 backdrop-blur-sm px-6 py-5 shadow-[0_18px_70px_rgba(0,0,0,0.35)]">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-left">
+                  <p className="text-white font-semibold">Become a VirtuXYZ Agent</p>
+                  <p className="text-white/70 text-sm mt-1">
+                    Apply to list properties and access the Agent Portal.
+                  </p>
+                </div>
+                <Link
+                  href="/agent-portal?mode=register"
+                  className="btn-outline-cyber inline-flex items-center justify-center min-h-[44px] px-6"
+                >
+                  Register as Agent
+                </Link>
+              </div>
+            </div>
+          </motion.div>
+
           {/* Search Bar */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
